@@ -1,12 +1,14 @@
 <script>
-    let email = '';
-    let password = '';
+        let email = '';
+        let password = '';
 
-    function handleSubmit() {
-        // Handle form submission
-        console.log('username:', email);
-        console.log('otp:', password);
-    }
+        function handleSubmit(event) {
+            event.preventDefault();
+            // Handle form submission
+            console.log('username:', email);
+            console.log('otp:', password);
+        }
+
 </script>
 
 <style>
@@ -159,6 +161,7 @@
                 <label for="password">OTP</label>
                 <input type="password" id="password" placeholder="Enter the 6 digit OTP" bind:value={password}>
             </div>
+            <button>Send OTP</button><p></p>
             <button type="submit">Login</button>
         </form>
         <p class="dha">Want to become a registered user? <a href="signup" class='su'>Click here</a></p>
