@@ -1,14 +1,51 @@
 <script>
+	import { goto } from "$app/navigation";
+
         let email = '';
         let password = '';
-
-        function handleSubmit(event) {
+        let otp_val = 0;
+       
+       async function handleSubmit(event) {
             event.preventDefault();
-            // Handle form submission
-            console.log('username:', email);
-            console.log('otp:', password);
+            let txtPassword = document.getElementById("password");
+            if (txtPassword.value == otp_val) {
+					alert("Email address verified...");
+                    goto('http://localhost:5173/contact')
+				}
+				else {
+					alert("Invalid OTP");
+				}
         }
+        function sendOTP() {
+	        const email = document.getElementById('email');
+	        const otpverify = document.getElementsByClassName('otpverify')[0];
+            otp_val = Math.floor(Math.random() * 1000000);
+	        let emailbody = `<h2>Your OTP is </h2>${otp_val}`;
+        Email.send({
+        SecureToken : "ea01ecf2-c78d-4d0d-9793-5a20ef4be616",
+        // @ts-ignore
+        To : email.value,
+        From : "akshay.barve@vestanam.com",
+        Subject : "OTP Mail",
+        Body : emailbody}).then(
 
+	message => {
+        debugger;
+        //if otp sent sucesfully
+		if (message === "OK") {
+			// @ts-ignore
+			alert("OTP sent to your email " + email.value);
+
+			//otpverify.style.display = "flex";
+			const password = document.getElementById('password');
+			
+
+			// @ts-ignore
+			
+		}
+	}
+);
+}
 </script>
 
 <style>
@@ -51,7 +88,7 @@
         font-weight: 700;
     }
 
-    input[type="text"],
+    input[type="email"],
     input[type="password"] {
         width: 100%;
         padding: 12px;
@@ -74,7 +111,7 @@
         font-family: 'Reddit Mono', monospace;
         font-weight: 700;
     }
-    button {
+    button[type = "submit"]{
         width: 100%;
         padding: 12px;
         border: none;
@@ -138,6 +175,22 @@
             font-family: 'Reddit Mono', monospace;
             font-weight: 700;
         }
+    button[type = 'otpgen']{
+        width: 40%;
+        padding: 12px;
+        height: min-content;
+        align-content:end;
+        border-radius: 5px;
+        size: 1px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        font-size: 20px;
+        transition: background-color 0.3s ease;
+        font-family: 'Reddit Mono', monospace;
+        font-weight: 400;
+    }
 </style>
 
 <nav class = 'navi'>
@@ -152,17 +205,17 @@
 <div class="center">
     <div class="container">
         <h2>Login</h2>
-        <form on:submit|preventDefault={handleSubmit}>
+        <form>
             <div>
                 <label for="email">Username</label>
-                <input type="text" id="email" placeholder="Enter your username" bind:value={email}>
+                <input type="email" id="email" placeholder="Enter your username" bind:value={email}>
+                <button type = "otpgen" on:click={sendOTP}>Send OTP</button><p></p>
             </div>
             <div>
                 <label for="password">OTP</label>
                 <input type="password" id="password" placeholder="Enter the 6 digit OTP" bind:value={password}>
-            </div>
-            <button>Send OTP</button><p></p>
-            <button type="submit">Login</button>
+            </div>  
+            <button type="submit" id = "otp-btn" on:click={handleSubmit}>Login</button>
         </form>
         <p class="dha">Want to become a registered user? <a href="signup" class='su'>Click here</a></p>
   </div>
