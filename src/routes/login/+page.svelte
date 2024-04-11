@@ -9,7 +9,7 @@
             event.preventDefault();
             let txtPassword = document.getElementById("password");
             if (txtPassword.value == otp_val) {
-					alert("Email address verified...");
+					//alert("Email address verified...");
                     goto('http://localhost:5173/contact')
 				}
 				else {
@@ -21,6 +21,7 @@
 	        const otpverify = document.getElementsByClassName('otpverify')[0];
             otp_val = Math.floor(Math.random() * 1000000);
 	        let emailbody = `<h2>Your OTP is </h2>${otp_val}`;
+        // @ts-ignore
         Email.send({
         SecureToken : "ea01ecf2-c78d-4d0d-9793-5a20ef4be616",
         // @ts-ignore

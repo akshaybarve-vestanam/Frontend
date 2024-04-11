@@ -1,5 +1,5 @@
 <script>
-  /import { navigate } from 'svelte-routing';/
+  /*import { navigate } from 'svelte-routing';*/
   import { goto } from '$app/navigation';
   let name = '';
   let email = '';
@@ -25,6 +25,7 @@
       align-items: center;
       height: 100vh;
       background : linear-gradient(to bottom, #0f0c29, #302b63, #24243e); 
+      min-height: calc(100vh - 100px);
   }
   
  /* @keyframes gradientTransition {
@@ -38,7 +39,7 @@
           background-color: #24243e;
       }
   }*/
-
+  @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Reddit+Mono:wght@200..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
   .container {
     max-width: 400px;
     margin: 0 auto;
@@ -49,7 +50,9 @@
     font-family: 'Reddit Mono', monospace;
     font-weight: 700;
     border: 2px solid #ffffff;
+    width : 100%;
   }
+
 
   h2 {
     text-align: center;
@@ -134,12 +137,14 @@
     font-weight: 700;
   }
   .footer {
-            background-color: #302b63;
+            background-color: #0c0742;
             color: #fff;
             padding: 20px;
             text-align: center;
             font-family: 'Reddit Mono', monospace;
             font-weight: 700;
+            position: relative;
+            width: 100%;
         }
 </style>
 
@@ -180,5 +185,5 @@
   </div>
 </div>
 <footer class="footer">
-  <p>&copy; 2024 Vestanam Solutions Pvt. Ltd. All rights reserved.</p>
+  <p class = "textfoot">&copy; 2024 <a href = "https://www.vestanam.com/">Vestanam Solutions Pvt. Ltd.</a> All rights reserved.</p>
 </footer>
