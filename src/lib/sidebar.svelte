@@ -1,36 +1,3 @@
-<!-- <script>
-    import { Col, Row, Nav, NavLink, NavItem, Button } from '@sveltestrap/sveltestrap';
-  </script>
-  
-  <Row>
-    <Col sm="3">
-      <Nav vertical>
-        <NavItem>
-          <NavLink href="#">Home</NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink href="#">About</NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink href="#">Services</NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink href="#">Contact</NavLink>
-        </NavItem>
-      </Nav>
-    </Col>
-    <Col sm="9">
-      <div>
-         Main content goes here -->
-        <!-- <h2>Welcome to My Website</h2> -->
-        <!-- <p>This is the main content area.</p> -->
-      <!-- </div> -->
-    <!-- </Col> -->
-  <!-- </Row> -->
-
- <!-- src/lib/Sidebar.svelte -->
-<!-- src/lib/Sidebar.svelte -->
-<!-- src/lib/Sidebar.svelte -->
 <script>
     let showRegistrationSubmenu = false;
 </script>
