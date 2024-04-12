@@ -13,29 +13,28 @@
     }
 
   </script>
-<body style="background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);">
-
 <style>   
  @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Reddit+Mono:wght@200..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
     .card {
       margin: 20px;
-      background : linear-gradient(to bottom, #0f0c29, #302b63, #24243e); 
       font-family: 'Reddit Mono', monospace;
-      font-weight: 700;
-      color: whitesmoke;
-      border: 2px solid #ffffff;
+      font-weight: 400;
+      color: black;
+      border: 1px solid black;
       /*width : 50%;*/
       border-radius: 8px;
     }
     .card-header {
-        border: 2px solid #ffffff;
+        border: 1px solid black;
         padding: 10px; /* Optional: Add padding to the header */
+        font-weight: 700;
     }
 
     .card-body {
-        border: 2px solid #ffffff;
+        border: 1px solid black;
         padding: 20px; /* Optional: Add padding to the body */
     }
+   
     
 </style>
 
@@ -84,4 +83,3 @@
     </div>
   </div>
 </div>
-</body>

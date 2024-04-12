@@ -10,7 +10,7 @@
             let txtPassword = document.getElementById("password");
             if (txtPassword.value == otp_val) {
 					//alert("Email address verified...");
-                    goto('http://localhost:5173/contact')
+                    goto('http://localhost:5173/dashboard/registration/individual')
 				}
 				else {
 					alert("Invalid OTP");
