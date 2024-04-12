@@ -11,8 +11,36 @@
       const file = event.target.files[0];
       // Logic to handle the uploaded file
     }
+
   </script>
-  
+<body style="background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);">
+
+<style>   
+ @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Reddit+Mono:wght@200..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+    .card {
+      margin: 20px;
+      background : linear-gradient(to bottom, #0f0c29, #302b63, #24243e); 
+      font-family: 'Reddit Mono', monospace;
+      font-weight: 700;
+      color: whitesmoke;
+      border: 2px solid #ffffff;
+      /*width : 50%;*/
+      border-radius: 8px;
+    }
+    .card-header {
+        border: 2px solid #ffffff;
+        padding: 10px; /* Optional: Add padding to the header */
+    }
+
+    .card-body {
+        border: 2px solid #ffffff;
+        padding: 20px; /* Optional: Add padding to the body */
+    }
+    
+</style>
+
+
+<div class="page">
   <div class="card">
     <div class="card-header">
       Bulk Registration
@@ -30,9 +58,9 @@
           </div>
           <div class="col-md-6 mb-3">
             <label for="bulkLabels" class="form-label">
-              <i class="bi bi-tags"></i> Label
+              <i class="bi bi-tags"></i> 
             </label>
-            <!-- Placeholder for multi-select labels component similar to IndividualRegistration.svelte -->
+             <!--Placeholder for multi-select labels component similar to IndividualRegistration.svelte -->
           </div>
           <div class="col-md-6 mb-3">
             <button type="button" class="btn btn-info" on:click={downloadSampleExcel}>
@@ -55,10 +83,5 @@
       </form>
     </div>
   </div>
-  
-  <style>
-    .card {
-      margin: 20px;
-    }
-  </style>
-  
+</div>
+</body>

@@ -1,4 +1,5 @@
 <script>
+	// @ts-ignore
 	import Sidebar from '$lib/sidebar.svelte';
 </script>
 
