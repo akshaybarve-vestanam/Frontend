@@ -4,7 +4,7 @@
     let testDateTime = ''; // Added for date and time field
   
     function downloadSampleExcel() {
-      window.location.href = 'url-to-sample-excel-file.xlsx';
+      window.location.href = '/sample.xlsx';
     }
   
     function handleFileUpload(event) {

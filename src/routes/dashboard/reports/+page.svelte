@@ -8,7 +8,9 @@
       name: `Name ${index + 1}`,
       testType: ['Student', 'Professional'][Math.floor(Math.random() * 2)],
       dateOfTest: new Date(2022 + Math.floor(Math.random() * 2), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28)).toLocaleDateString(),
-      city: ['City A', 'City B', 'City C'][Math.floor(Math.random() * 3)]
+      emailid : `name${index+1}@gmail.com`,
+      phonenumber : `9${Math.floor(100000000 + Math.random() * 900000000)}`,
+      city: ['Nagpur', 'Mumbai', 'Delhi','Bengaluru'][Math.floor(Math.random() * 3)],
     }));
   };
 
@@ -61,11 +63,13 @@
   <table class="table">
     <thead>
       <tr>
-        <th><input type="checkbox" on:change={toggleSelectAll}></th>
+        <th><input type="checkbox" on:click={toggleSelectAll}></th>
         <th>Sr No</th>
         <th>Name</th>
         <th>Test Type</th>
         <th>Date of Test</th>
+        <th>Email id</th>
+        <th>Phone number</th>
         <th>City</th>
       </tr>
     </thead>
@@ -77,6 +81,8 @@
           <td>{report.name}</td>
           <td>{report.testType}</td>
           <td>{report.dateOfTest}</td>
+          <td>{report.emailid}</td>
+          <td>{report.phonenumber}</td>
           <td>{report.city}</td>
         </tr>
       {/each}
@@ -92,3 +98,20 @@
     </nav>
   </div>
 </div>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Reddit+Mono:wght@200..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+  .table{
+      margin: 20px;
+      font-family: 'Reddit Mono', monospace;
+      font-weight: 400;
+      color: black;
+      border: 1px solid black;
+      /*width : 50%;*/
+      border-radius: 8px;
+  }
+  h2{
+    font-family: 'Reddit Mono', monospace;
+    font-weight: 700;
+  }
+</style>

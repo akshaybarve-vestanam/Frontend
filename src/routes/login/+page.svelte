@@ -208,8 +208,8 @@
         <h2>Login</h2>
         <form>
             <div>
-                <label for="email">Username</label>
-                <input type="email" id="email" placeholder="Enter your username" bind:value={email}>
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email" bind:value={email}>
                 <button type = "otpgen" on:click={sendOTP}>Send OTP</button><p></p>
             </div>
             <div>

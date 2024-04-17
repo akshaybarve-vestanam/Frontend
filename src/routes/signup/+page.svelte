@@ -23,7 +23,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      /*height: 100vh;*/
       background : linear-gradient(to bottom, #0f0c29, #302b63, #24243e); 
       min-height: calc(100vh - 100px);
   }
