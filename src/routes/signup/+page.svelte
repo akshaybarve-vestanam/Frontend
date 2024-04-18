@@ -7,15 +7,50 @@
   let address = '';
   let query='';
 
-  function handleSubmit() {
-    // Here you would handle form submission, for now, let's just log the values
+
+  
+  const handleSubmit = () =>{
+    if (
+			!name ||
+			!email ||
+			!address ||
+			!phoneNumber ||
+			!query
+		) {
+			alert('Please fill in all the details');
+			return;
+		}
+  
+     fetch('http://localhost:3000/signup', {
+			method: 'POST',
+			headers : {
+					'Content-Type' : 'application/json'
+			},
+			body: JSON.stringify({
+				name : name,
+        email : email,
+        phoneNumber : phoneNumber,
+        address : address,
+        query : query
+			})
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data);
+			})
+			.catch((error) => {
+				console.log(error);
+				return [];
+			});
     console.log('Name:', name);
     console.log('Email:', email);
     console.log('Phone Number:', phoneNumber);
     console.log('Address:', address);
     console.log('Query',query);
+    alert("Your query request has been sent successfully");
     goto('/login')
-  }
+    }
+  
 </script>
 
 <style>
@@ -159,7 +194,7 @@
 <div class="center">
 <div class="container">
   <h2>Query Request</h2>
-  <form on:submit|preventDefault={handleSubmit}>
+  <form on:submit|preventDefault={handleSubmit} method="POST">
     <div>
       <label for="name">Name</label>
       <input type="text" id="name" placeholder="Enter your name" bind:value={name} />
