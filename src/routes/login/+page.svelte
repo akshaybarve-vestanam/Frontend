@@ -49,6 +49,7 @@
 }
 </script>
 
+
 <style>
     
     .center {
@@ -192,6 +193,9 @@
         font-family: 'Reddit Mono', monospace;
         font-weight: 400;
     }
+    .otpbutton{
+        font-family: 'Reddit Mono', monospace;
+    }
 </style>
 
 <nav class = 'navi'>
@@ -210,7 +214,7 @@
             <div>
                 <label for="email">Email</label>
                 <input type="email" id="email" placeholder="Enter your email" bind:value={email}>
-                <button type = "otpgen" on:click={sendOTP}>Send OTP</button><p></p>
+                <button class="otpbutton" type = "submit" on:click={sendOTP}>Send OTP</button>
             </div>
             <div>
                 <label for="password">OTP</label>
