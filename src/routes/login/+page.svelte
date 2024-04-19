@@ -1,6 +1,5 @@
 <script>
 	import { goto } from "$app/navigation";
-
         let email = '';
         let password = '';
         let otp_val = 0;
@@ -46,7 +45,15 @@
 		}
 	}
 );
+
+
 }
+
+let isButtonDisabled = true;
+   // var inputValue = '';
+    function handleChange() {
+    isButtonDisabled = password === '';
+  }
 </script>
 
 <style>
@@ -214,9 +221,9 @@
             </div>
             <div>
                 <label for="password">OTP</label>
-                <input type="password" id="password" placeholder="Enter the 6 digit OTP" bind:value={password}>
+                <input type="password" id="password" placeholder="Enter the 6 digit OTP" bind:value={password} on:input={handleChange}>
             </div>  
-            <button type="submit" id = "otp-btn" on:click={handleSubmit}>Login</button>
+            <button type="submit" id = "otp-btn" disabled = {isButtonDisabled} on:click={handleSubmit} >Login</button>
         </form>
         <p class="dha">Want to become a registered user? <a href="signup" class='su'>Click here</a></p>
   </div>

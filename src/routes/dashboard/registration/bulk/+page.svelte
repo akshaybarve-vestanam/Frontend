@@ -4,7 +4,8 @@
     let testDateTime = ''; // Added for date and time field
   
     function downloadSampleExcel() {
-      window.location.href = '/sample.xlsx';
+      //window.location.href = '/sample.xlsx';
+         window.open("https://docs.google.com/spreadsheets/d/1Ss2TmGBF2Oc3MMmX2v-qTMLTkoH97nmwmFVvtkrNM_Y/edit?usp=sharing")
     }
   
     function handleFileUpload(event) {
@@ -62,7 +63,7 @@
              <!--Placeholder for multi-select labels component similar to IndividualRegistration.svelte -->
           </div>
           <div class="col-md-6 mb-3">
-            <button type="button" class="btn btn-info" on:click={downloadSampleExcel}>
+            <button type="button" id="btn" class="btn btn-info" on:click={downloadSampleExcel}>
               <i class="bi bi-file-earmark-excel-fill"></i> Download Sample Excel
             </button>
           </div>
