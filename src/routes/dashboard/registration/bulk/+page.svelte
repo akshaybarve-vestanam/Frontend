@@ -80,6 +80,9 @@
             <input type="datetime-local" class="form-control" id="testDateTime" bind:value={testDateTime}>
           </div>
         </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-cursor-fill"></i> Submit
+        </button>
       </form>
     </div>
   </div>
