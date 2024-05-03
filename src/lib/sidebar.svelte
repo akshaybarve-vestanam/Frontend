@@ -9,11 +9,11 @@
         margin-right: 8px;
     }
     .sidebar {
-        min-width: 250px;
+        min-width: 200px;
         max-width: 250px;
         min-height: 100vh;
         background : linear-gradient(to bottom, #0f0c29, #302b63, #24243e)  !important;
-        border: 2px solid #ffffff;
+        
     }
     .sidebar.collapsed {
         min-width: 80px;
@@ -43,87 +43,6 @@
         align-items: center;
         font-family: 'Reddit Mono', monospace;
     }
-    /* Style the dropdown button */
-.dropbtn {
-  background-color:#302b63;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-  font-family: 'Reddit Mono', monospace;
-}
-
-/* Position the dropdown content (hidden by default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 200px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-  right: 0;
-  bottom: 100%;
-  font-family: 'Reddit Mono', monospace;
-}
-
-/* Style links inside the dropdown */
-.dropdown-content a {
-  color: black;
-  padding: 5px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {
-  background-color: #f1f1f1;
-}
-
-/* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-/* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {
-  background-color:  black;
-}
-.dropbtn {
-    border: 2px solid white; /* Add white outline */
-    color: white; /* Change text color to white */
-    background-color: transparent; /* Make background transparent */
-    padding: 10px 20px; /* Adjust padding as needed */
-    font-size: 16px; /* Adjust font size as needed */
-    cursor: pointer;
-}
-
-.dropbtn:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Add hover effect with semi-transparent white */
-}
-
-/* Additional styling for dropdown content */
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 200px;
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 8px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
-}
-
-
 </style>
 
 <div class={`d-flex flex-column flex-shrink-0 p-3 bg-light sidebar`} style="width: 280px;">
@@ -154,7 +73,7 @@
         <li>
             <a href="/dashboard/reports" class="nav-link link-dark">
                 <i class="bi bi-table"></i>
-                Reports
+                Candidates
             </a>
         </li>
         <li>
@@ -163,19 +82,29 @@
                 Stats/Analytics
             </a>
         </li>
+        <li>
+            <a href="/dashboard/tests" class="nav-link link-dark">
+                <i class="bi bi-graph-up"></i>
+                Tests
+            </a>
+        </li>
+        <li>
+            <a href="/dashboard/exams" class="nav-link link-dark">
+                <i class="bi bi-graph-up"></i>
+                Exams
+            </a>
+        </li>
     </ul>
     <hr>
     <div class="dropdown">
-        <button class="dropbtn"><i class="bi bi-menu-button"></i>Menu</button>
-        <div class="dropdown-content">
-          <a href="#">Settings</a>
-          <a href="#">Profile</a>
-          <a href="/login">Sign Out</a>
-        </div>
-      </div>
-</div>  
-
-
-
-
-  
+        <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="user-image-url.jpg" alt="" class="user-img">
+        </a>
+        <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Sign out</a></li>
+        </ul>
+    </div>
+</div>
