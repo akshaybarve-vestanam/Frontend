@@ -1,6 +1,5 @@
 <script>
   import { onMount } from 'svelte';
-  import { Modals, closeModal } from 'svelte-modals'
 
   // Mock data generation
   const generateMockData = () => {
