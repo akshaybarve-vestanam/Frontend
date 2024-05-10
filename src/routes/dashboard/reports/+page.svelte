@@ -1,5 +1,8 @@
 <script>
   import { onMount } from 'svelte';
+  import { Modals, closeModal, openModal, modals } from 'svelte-modals';
+	import { fade } from 'svelte/transition';
+	import Modal from '$lib/Modal.svelte';
 
   // Mock data generation
   const generateMockData = () => {
@@ -62,6 +65,33 @@
     }
 
 
+	function handleOpen() {
+		openModal(Modal, {
+			title: `Send Mail #${$modals.length + 1}`,
+			message: 'This is an alert',
+			onOpenAnother: () => {
+				handleOpen();
+			}
+		});
+
+	}
+	
+	function sendMail(option) {
+    switch(option) {
+      case 'registration':
+        // Logic to send registration email
+        break;
+      case 'instructions':
+        // Logic to send instructions email
+        break;
+      case 'reports':
+        // Logic to send reports email
+        break;
+      default:
+        break;
+    }
+    closeModal(); // Close the modal after sending the email
+  }
    
 
 
@@ -133,15 +163,41 @@
           <td>{candidates.city}</td>
           <td>{candidates.status}</td>
           <td>
-            <i class="bi bi-envelope-fill " on:click={openMail}></i> <!-- Bootstrap Icon for mail -->
+            <i class="bi bi-envelope-fill "  on:click={handleOpen}></i> <!-- Bootstrap Icon for mail -->
             <i class="bi bi-download" on:click={downloadFile}></i> <!-- Bootstrap Icon for download -->
-            <i class="bi bi-three-dots" on:click={editContent}></i> <!-- Bootstrap Icon for edit -->
-        </td>
+             <i class="bi bi-three-dots" on:click={editContent}></i> <!-- Bootstrap Icon for edit --->
+        
+          </td>
         </tr>
         {/each}
     </tbody>
 </table>
+ <Modals>
+	<div slot="backdrop" class="backdrop" transition:fade on:click={closeModal} />
+</Modals> 
 
+<div>
+	<p>{modals.message}</p>
+	<button on:click={() => sendMail('registration')}>Send Registration Email</button>
+	<button on:click={() => sendMail('instructions')}>Send Instructions Email</button>
+	<button on:click={() => sendMail('reports')}>Send Reports Email</button>
+  </div>
+  
+
+<!-- <Modals>
+    <div slot="backdrop" class="backdrop" transition:fade on:click={closeModal} />
+    <div class="modal">
+        <div class="modal-header">
+            <h2>{modals.title}</h2>
+        </div>
+        <div class="modal-body">
+            <p>{modals.message}</p>
+            <button on:click={modals.onOpenAnother}>Send Registration Email</button>
+            <button on:click={modals.onOpenAnother}>Send Instructions Email</button>
+            <button on:click={modals.onOpenAnother}>Send Reports Email</button>
+        </div>
+    </div>
+</Modals> -->
 
 
   <div class="d-flex justify-content-between">
@@ -180,9 +236,16 @@
 }
   
   
-
+.backdrop {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		background: rgba(7, 37, 236, 0.5);
+	}
   
 
 
-
 </style>
+
