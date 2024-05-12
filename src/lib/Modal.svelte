@@ -1,34 +1,65 @@
 <script>
-    import { closeModal, closeAllModals, openModal, modals } from 'svelte-modals'
-      import { fly } from 'svelte/transition'
-      
-    export let isOpen
-    export let title
-    export let message
-      export let onOpenAnother
-      
-      let stackIndex = $modals.length
-  </script>
+  import { closeModal, closeAllModals, openModal, modals } from 'svelte-modals'
+  import { fly } from 'svelte/transition'
+    
+  export let isOpen
+  export let title
+  export let message
+  export let onOpenAnother
+    
+  let stackIndex = $modals.length
+
+  // Variables to store email data
+  let to = ''
+  let cc = ''
+  let bcc = ''
+  let emailBody = ''
   
-  {#if isOpen}
-      <!-- on:introstart and on:outroend are required to transition 1 at a time between modals -->
-    <div role="dialog" class="modal" transition:fly={{ y: 50 }} on:introstart on:outroend>
+  // Function to send email
+  function sendEmail() {
+      // Implement your logic to send the email using the provided data
+      console.log("Sending email to:", to)
+      console.log("CC:", cc)
+      console.log("BCC:", bcc)
+      console.log("Body:", emailBody)
+      // Close the modal after sending the email
+      closeModal()
+  }
+</script>
+
+{#if isOpen}
+  <div role="dialog" class="modal" transition:fly={{ y: 50 }} on:introstart on:outroend>
       <div class="contents">
-        <h2>{title}</h2>
-        <p>{message}</p>
-        <div class="actions">
-                  {#if stackIndex > 1}
-                      <button on:click={closeModal}>Close One</button>
-                      <button on:click={closeAllModals}>Close All</button>				
-                  {:else}
-                      <button on:click={closeModal}>Close</button>
-                  {/if}				
-          <button on:click={onOpenAnother}>Open Another</button>				
-        </div>
+          <h2>{title}</h2>
+          <p>{message}</p>
+          <div class="email-options">
+              <label for="to">To:</label>
+              <input type="text" id="to" bind:value={to} />
+              <p></p>
+              <label for="cc">Cc:</label>
+              <input type="text" id="cc" bind:value={cc} />
+              <p></p>
+              <label for="bcc">Bcc:</label>
+              <input type="text" id="bcc" bind:value={bcc} />
+              <p></p>
+          </div>
+          <div class="email-body">
+              <label for="email-body">Email Body:</label>
+              <textarea id="email-body" bind:value={emailBody}></textarea>
+          </div>
+          <div class="actions">
+              {#if stackIndex > 1}
+                  <button on:click={closeModal}>Close One</button>
+                  <button on:click={closeAllModals}>Close All</button>				
+              {:else}
+                  <button on:click={closeModal}>Close</button>
+              {/if}				
+              <button on:click={sendEmail}>Send Email</button>
+              <button on:click={onOpenAnother}>Open Another</button>				
+          </div>
       </div>
-    </div>
-  {/if}
-  
+  </div>
+{/if}
   <style>
     .modal {
       position: fixed;
