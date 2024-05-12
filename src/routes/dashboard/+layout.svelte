@@ -12,7 +12,9 @@
 </div>
 
 <Modals>
-	<div slot="backdrop" class="backdrop" on:click={closeModal} />
+	<div slot="backdrop" 
+	class="backdrop" 
+	on:click={closeModal} />
 </Modals>
 
 <style>

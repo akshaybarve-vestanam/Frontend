@@ -13,7 +13,7 @@
         max-width: 250px;
         min-height: 100vh;
         background : linear-gradient(to bottom, #0f0c29, #302b63, #24243e)  !important;
-        
+       
     }
     .sidebar.collapsed {
         min-width: 80px;
