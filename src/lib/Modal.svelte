@@ -28,48 +28,54 @@
 {#if isOpen}
 <div role="dialog" class="modal" transition:fly={{ y: 50 }} on:introstart on:outroend>
   <div class="contents">
-      <h2>{title}</h2>
-      <p>{message}</p>
-      <div class="email-option-select">
-          <label for="email-type">Choose Email Type:</label>
-          <select id="email-type" bind:value={selectedOption}>
-              <option value="">Select</option>
-              <option value="Registration">Send Registration Email</option>
-              <option value="Instructions">Send Instructions Email</option>
-              <option value="Reports">Send Reports Email</option>
-          </select>
+      <div class="modal-header"> 
+          <h2>{title}</h2>
+          <p>{message}</p>
       </div>
-      {#if selectedOption}
-      <div class="email-options">
-          <label for="to">To:</label>
-          <input type="text" id="to" bind:value={to} />
+      <div class="modal-body">
+          <div class="email-option-select">
+              <label for="email-type">Choose Email Type:</label>
+              <select id="email-type" bind:value={selectedOption}>
+                  <option value="">Select</option>
+                  <option value="Registration">Send Registration Email</option>
+                  <option value="Instructions">Send Instructions Email</option>
+                  <option value="Reports">Send Reports Email</option>
+              </select>
+          </div>
+          {#if selectedOption}
+          <div class="email-options">
+              <label for="to">To:</label>
+              <input type="text" id="to" bind:value={to} />
 
-          <label for="cc">CC:</label>
-          <input type="text" id="cc" bind:value={cc} />
+              <label for="cc">CC:</label>
+              <input type="text" id="cc" bind:value={cc} />
 
-          <label for="bcc">BCC:</label>
-          <input type="text" id="bcc" bind:value={bcc} />
+              <label for="bcc">BCC:</label>
+              <input type="text" id="bcc" bind:value={bcc} />
+          </div>
+          <div class="email-body">
+              <label for="email-body">Email Body:</label>
+              <textarea id="email-body" bind:value={emailBody}></textarea>
+          </div>
+          <div class="actions">
+              {#if stackIndex > 1}
+                  <button on:click={closeModal}>Close One</button>
+                  <button on:click={closeAllModals}>Close All</button>				
+              {:else}
+                  <button on:click={closeModal}>Close</button>
+              {/if}				
+              <button on:click={sendEmail}>Send Email</button>
+              <button on:click={onOpenAnother}>Open Another</button>				
+          </div>
+          {/if}
       </div>
-      <div class="email-body">
-          <label for="email-body">Email Body:</label>
-          <textarea id="email-body" bind:value={emailBody}></textarea>
-      </div>
-      <div class="actions">
-          {#if stackIndex > 1}
-              <button on:click={closeModal}>Close One</button>
-              <button on:click={closeAllModals}>Close All</button>				
-          {:else}
-              <button on:click={closeModal}>Close</button>
-          {/if}				
-          <button on:click={sendEmail}>Send Email</button>
-          <button on:click={onOpenAnother}>Open Another</button>				
-      </div>
-      {/if}
   </div>
 </div>
+
 {/if}
 
   <style>
+
     .modal {
       position: fixed;
       top: 0;
@@ -111,7 +117,22 @@
       justify-content: space-between;
           gap: 8px;
     }
+
+    .actions button:hover {
+        background-color: #ddd; /* Change to desired hover background color */
+        color: #333; /* Change to desired hover text color */
+    }
   
+    .modal-header {
+        background-color: #302b63;
+        color: white;
+        padding: 10px;
+    }
+
+    .modal-body {
+        background-color:  #f8f9fa;
+        padding: 10 px;
+    }
 
   
   </style>
