@@ -20,6 +20,7 @@
 	        const otpverify = document.getElementsByClassName('otpverify')[0];
             otp_val = Math.floor(Math.random() * 1000000);
 	        let emailbody = `<h2>Your OTP is </h2>${otp_val}`;
+            otpSent = true;
         // @ts-ignore
         Email.send({
         SecureToken : "ea01ecf2-c78d-4d0d-9793-5a20ef4be616",
@@ -54,6 +55,24 @@ let isButtonDisabled = true;
     function handleChange() {
     isButtonDisabled = password === '';
   }
+
+
+  
+    let otpSent = false; // Define the otpSent variable and initialize it to false
+
+    // function sendOTP() {
+    //     // Add your logic to send OTP
+    //     // Once OTP is sent, set otpSent to true
+    //     otpSent = true;
+    // }
+
+    // function handleChange() {
+    //     // Add your logic to handle input change
+    // }
+
+    // function handleSubmit() {
+    //     // Add your logic to handle form submission
+    // }
 </script>
 
 
@@ -218,19 +237,27 @@ let isButtonDisabled = true;
     <div class="container">
         <h2>Login</h2>
         <form>
+            {#if !otpSent}
             <div>
                 <label for="email">Email</label>
                 <input type="email" id="email" placeholder="Enter your email" bind:value={email}>
-                <button class="otpbutton" type = "submit" on:click={sendOTP}>Send OTP</button>
             </div>
+                <button class="otpbutton" type = "submit" on:click={sendOTP}>Send OTP</button>
+                {/if}
+            
+            
+            {#if otpSent}
             <div>
                 <label for="password">OTP</label>
                 <input type="password" id="password" placeholder="Enter the 6 digit OTP" bind:value={password} on:input={handleChange}>
             </div>  
-            <button type="submit" id = "otp-btn" disabled = {isButtonDisabled} on:click={handleSubmit} >Login</button>
+            <button type="button" id="otp-btn" disabled={isButtonDisabled} on:click={handleSubmit}>Login</button>
+            {/if}
         </form>
-        <p class="dha">Want to become a registered user? <a href="signup" class='su'>Click here</a></p>
-  </div>
+        
+        <p class="dha">Want to become a registered user? <a href="signup" class="su">Click here</a></p>
+        
+        </div>
 </div>
 <footer class="footer">
     <p>&copy; 2024 Vestanam Solutions Pvt. Ltd. All rights reserved.</p>
