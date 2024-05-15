@@ -6,7 +6,7 @@
 
 	async function login() {
 		if (password) {
-			const res = await fetch('http://localhost:3000/user/otp', {
+			const res = await fetch('http://localhost:3000/login', {
 				method: 'POST',
 				headers: {
 					'content-type': 'application/json'
