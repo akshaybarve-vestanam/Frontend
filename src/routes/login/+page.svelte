@@ -23,7 +23,7 @@
 				})
 			});
 			console.log(res);
-			const labelsRes=await fetch('http//localhost:3000/labels',{
+			const labelsRes=await fetch('http://localhost:3000/labels',{
 				method: 'GET',
 				credentials: 'include',
 				headers:{
@@ -45,9 +45,10 @@
 	async function sendOTP() {
 		console.log('email', email);
 		if (email) {
-			navigating.set(true);
+			//navigating.set(true);
 			const res = await fetch('http://localhost:3000/user/otp', {
 				method: 'POST',
+				credentials: 'include',
 				headers: {
 					'content-type': 'application/json'
 				},
@@ -60,7 +61,7 @@
 				otpSent = true;
 			}
 			console.log(jsonRes);
-			navigating.set(false);
+			// navigating.set(false);
 		} else {
 			console.log('please enter email');
 		}
