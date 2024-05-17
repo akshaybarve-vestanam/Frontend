@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { SyncLoader } from 'svelte-loading-spinners';
 	import { navigating } from '$app/stores'
+
 	
 	
 	let email = '';
@@ -48,6 +49,7 @@
 			navigating.set(true);
 			const res = await fetch('http://localhost:3000/user/otp', {
 				method: 'POST',
+				credentials: 'include',
 				headers: {
 					'content-type': 'application/json'
 				},
