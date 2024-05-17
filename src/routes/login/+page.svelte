@@ -11,11 +11,9 @@
 
 	async function login() {
 		if (password) {
-
-			navigating.update(n => true);
-
 			const res = await fetch('http://localhost:3000/login', {
 				method: 'POST',
+				credentials:'include',
 				headers: {
 					'content-type': 'application/json'
 				},
@@ -24,12 +22,22 @@
 					email: email
 				})
 			});
-			const jsonRes = await res.json();
-			if (jsonRes.s) {
-				otpSent = true;
-			}
-			console.log(jsonRes);
-			navigating.update(n => false);
+			console.log(res);
+			const labelsRes=await fetch('http//localhost:3000/labels',{
+				method: 'GET',
+				credentials: 'include',
+				headers:{
+					'content-type':'application/json'
+				}
+			});
+			console.log(labelsRes);
+
+			//const jsonRes = await res.json();
+			//if (jsonRes.s) {
+			otpSent = true;
+			//}
+			//console.log(jsonRes);
+			//navigating.update(n => false);
 		} else {
 			console.log('please enter otp');
 		}
