@@ -1,7 +1,8 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { SyncLoader } from 'svelte-loading-spinners';
 	import { navigating } from '$app/stores'
+	import { isLoading } from '../../stores/loading';
+      isLoading.set(true);
 
 	
 	
