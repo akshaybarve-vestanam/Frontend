@@ -1,11 +1,13 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { navigating } from '$app/stores'
 	import { isLoading } from '../../stores/loading';
-      isLoading.set(true);
+	import { base_url } from '../../stores/constants';
+	import { getNotificationsContext } from 'svelte-notifications';
 
-	
-	
+	const { addNotification } = getNotificationsContext();
+
+	isLoading.set(false);
+
 	let email = '';
 	let password = '';
 	let otp_val = 0;
@@ -13,9 +15,9 @@
 
 	async function login() {
 		if (password) {
-			const res = await fetch('http://localhost:3000/login', {
+			const res = await fetch($base_url + 'login', {
 				method: 'POST',
-				credentials:'include',
+				credentials: 'include',
 				headers: {
 					'content-type': 'application/json'
 				},
@@ -24,22 +26,12 @@
 					email: email
 				})
 			});
-			console.log(res);
-			const labelsRes=await fetch('http://localhost:3000/labels',{
-				method: 'GET',
-				credentials: 'include',
-				headers:{
-					'content-type':'application/json'
-				}
-			});
-			console.log(labelsRes);
 
-			//const jsonRes = await res.json();
-			//if (jsonRes.s) {
-			otpSent = true;
-			//}
+			const jsonRes = await res.json();
+			if (jsonRes.s) {
+				goto("/dashboard/registration/individual")
+			}
 			//console.log(jsonRes);
-			//navigating.update(n => false);
 		} else {
 			console.log('please enter otp');
 		}
@@ -47,8 +39,7 @@
 	async function sendOTP() {
 		console.log('email', email);
 		if (email) {
-			//navigating.set(true);
-			const res = await fetch('http://localhost:3000/user/otp', {
+			const res = await fetch($base_url + 'user/otp', {
 				method: 'POST',
 				credentials: 'include',
 				headers: {
@@ -61,9 +52,13 @@
 			const jsonRes = await res.json();
 			if (jsonRes.s) {
 				otpSent = true;
+			} else if (!jsonRes.s) {
+				addNotification({
+					text: jsonRes.m,
+					position: 'top-center',
+					type: 'error'
+				});
 			}
-			console.log(jsonRes);
-			// navigating.set(false);
 		} else {
 			console.log('please enter email');
 		}
@@ -110,7 +105,9 @@
 					<label for="email">Email</label>
 					<input type="email" id="email" placeholder="Enter your email" bind:value={email} />
 				</div>
-				<button class="otpbutton" type="submit" on:click={sendOTP} disabled={sendingOTP}>Send OTP</button>
+				<button class="otpbutton" type="submit" on:click={sendOTP} disabled={sendingOTP}
+					>Send OTP</button
+				>
 			{/if}
 
 			{#if otpSent}
@@ -136,10 +133,6 @@
 <footer class="footer">
 	<p>&copy; 2024 Vestanam Solutions Pvt. Ltd. All rights reserved.</p>
 </footer>
-
-{#if $navigating}
-    <SyncLoader size="60" color="#FF3E00" unit="px" duration="1s" />
-{/if}
 
 <style>
 	.center {
@@ -267,7 +260,7 @@
 		font-family: 'Reddit Mono', monospace;
 		font-weight: 700;
 	}
-	button[type='otpgen']{
+	button[type='otpgen'] {
 		width: 40%;
 		padding: 12px;
 		height: min-content;

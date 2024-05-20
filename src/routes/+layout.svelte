@@ -1,9 +1,12 @@
 <script>
 	import { isLoading } from '../stores/loading';
-	isLoading.set(true);
+	import Notifications from 'svelte-notifications';
+	import { handle } from '../hooks';
 </script>
 
-<slot />
+<Notifications>
+	<slot />
+</Notifications>
 
 {#if $isLoading}
 	<div class="loader">Loading...</div>
