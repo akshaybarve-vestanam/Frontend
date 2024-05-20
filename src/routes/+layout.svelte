@@ -1,7 +1,6 @@
 <script>
 	import { isLoading } from '../stores/loading';
 	import Notifications from 'svelte-notifications';
-	import { handle } from '../hooks';
 </script>
 
 <Notifications>
