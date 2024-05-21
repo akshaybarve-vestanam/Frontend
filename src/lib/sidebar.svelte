@@ -98,7 +98,8 @@
     <hr>
     <div class="dropdown">
         <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="user-image-url.jpg" alt="" class="user-img">
+            <!-- <img src="user-image-url.jpg" alt="" class="user-img"> -->
+            <img src="" alt="" class="user-img">
         </a>
         <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
             <li><a class="dropdown-item" href="#">Settings</a></li>

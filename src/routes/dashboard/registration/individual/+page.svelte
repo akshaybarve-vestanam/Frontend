@@ -1,31 +1,42 @@
 <script>
-	import { onMount } from 'svelte';
+// @ts-nocheck
 
+	import { onMount } from 'svelte';
+	import { auth_base_url } from '../../../../stores/constants';
+
+	// @ts-ignore
 	let testTypes = []; // For storing test types fetched from the server
 	let labels = []; // For storing labels fetched from the server
 	let selectedTestType = '';
 	let fullName = '';
 	let mobileNumber = '+91'; // Default country code for India
 	let email = '';
+	// @ts-ignore
 	let selectedLabels = [];
 	let testDateTime = '';
 
 	// Simulate fetching test types from an API
 	onMount(async () => {
 		// Replace this URL with your actual API endpoint
-		const testTypesResponse = await fetch('https://api.example.com/test-types');
-		testTypes = await testTypesResponse.json();
-
-		// Simulate fetching labels from an API
-		const labelsResponse = await fetch('https://api.example.com/labels');
+		const labelsResponse = await fetch($auth_base_url + 'labels', {
+			method: 'GET',
+			credentials: 'include',
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
 		labels = await labelsResponse.json();
+
+		console.log('labels', labels);
 	});
 
 	// Function to handle label selection and creation logic
+	// @ts-ignore
 	function handleLabelSelectOrCreate(label) {
 		// Implement logic to select or create a label
 	}
 </script>
+
 <div class="card">
 	<div class="card-header">Individual Registration</div>
 	<div class="card-body">
@@ -87,24 +98,24 @@
 
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Reddit+Mono:wght@200..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
-    .card {
-      margin: 20px;
-      font-family: 'Reddit Mono', monospace;
-      font-weight: 400;
-      color: black;
-      border: 1px solid black;
-      /*width : 50%;*/
-      border-radius: 8px;
-    }
-    .card-header {
-        border: 1px solid black;
-        padding: 10px; /* Optional: Add padding to the header */
-		text-align:left;
+	.card {
+		margin: 20px;
+		font-family: 'Reddit Mono', monospace;
+		font-weight: 400;
+		color: black;
+		border: 1px solid black;
+		/*width : 50%;*/
+		border-radius: 8px;
+	}
+	.card-header {
+		border: 1px solid black;
+		padding: 10px; /* Optional: Add padding to the header */
+		text-align: left;
 		font-weight: 700;
-    }
+	}
 
-    .card-body {
-        border: 1px solid black;
-        padding: 20px; /* Optional: Add padding to the body */
-    }
+	.card-body {
+		border: 1px solid black;
+		padding: 20px; /* Optional: Add padding to the body */
+	}
 </style>
