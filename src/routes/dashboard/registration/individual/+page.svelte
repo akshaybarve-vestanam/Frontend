@@ -4,7 +4,11 @@
 	import { onMount } from 'svelte';
 	import { auth_base_url } from '../../../../stores/constants';
 
-	let testTypes = ["test 1", "test 2", "test 3"]; 
+	const testTypes = {
+		test1:"test 1",
+		test2:"test 2",
+		test3:"test 3"
+	}
 	let labels = []; 
 	let selectedTestType = '';
 	let fullName = '';
