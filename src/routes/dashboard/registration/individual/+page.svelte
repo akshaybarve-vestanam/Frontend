@@ -3,12 +3,12 @@
 	import { base_url } from '../../../../stores/constants';
 	import { onMount } from 'svelte';
 	import { auth_base_url } from '../../../../stores/constants';
-	
-	let testTypes = ["test 1", "test 2", "test 3"]; // For storing test types fetched from the server
-	let labels = []; // For storing labels fetched from the server
+
+	let testTypes = ["test 1", "test 2", "test 3"]; 
+	let labels = []; 
 	let selectedTestType = '';
 	let fullName = '';
-	let mobileNumber = '+91'; // Default country code for India
+	let mobileNumber = '+91'; 
 	let email = '';
 	let selectedLabels = [];
 	let testDateTime = '';
@@ -35,15 +35,12 @@
 	}
 
 	async function registerCandidate() {
-		const candidateID = '';
 		const firstName = '';
 		const lastName = '';
 		const email = '';
 		const phoneNumber = '';
-		const address = '';
-		const organizationID = '';
 
-		if (candidateID && firstName && lastName && email && phoneNumber && address && organizationID) {
+		if (firstName && lastName && email && phoneNumber) {
 			const res = await fetch($base_url + 'candidates_register', {
 				method: 'POST',
 				credentials: 'include',
