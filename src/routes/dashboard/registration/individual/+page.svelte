@@ -1,17 +1,15 @@
 <script>
-// @ts-nocheck
-
+	// @ts-nocheck
+	import { base_url } from '../../../../stores/constants';
 	import { onMount } from 'svelte';
 	import { auth_base_url } from '../../../../stores/constants';
-
-	// @ts-ignore
-	let testTypes = []; // For storing test types fetched from the server
+	
+	let testTypes = ["test 1", "test 2", "test 3"]; // For storing test types fetched from the server
 	let labels = []; // For storing labels fetched from the server
 	let selectedTestType = '';
 	let fullName = '';
 	let mobileNumber = '+91'; // Default country code for India
 	let email = '';
-	// @ts-ignore
 	let selectedLabels = [];
 	let testDateTime = '';
 
@@ -34,6 +32,46 @@
 	// @ts-ignore
 	function handleLabelSelectOrCreate(label) {
 		// Implement logic to select or create a label
+	}
+
+	async function registerCandidate() {
+		const candidateID = '';
+		const firstName = '';
+		const lastName = '';
+		const email = '';
+		const phoneNumber = '';
+		const address = '';
+		const organizationID = '';
+
+		if (candidateID && firstName && lastName && email && phoneNumber && address && organizationID) {
+			const res = await fetch($base_url + 'candidates_register', {
+				method: 'POST',
+				credentials: 'include',
+				headers: {
+					'content-type': 'application/json'
+				},
+				body: JSON.stringify({
+					candidateID,
+					firstName,
+					lastName,
+					email,
+					phoneNumber,
+					address,
+					organizationID
+				})
+			});
+
+			const jsonRes = await res.json();
+			if (jsonRes.message) {
+				console.log(jsonRes.message);
+				// Navigate to another page or show success message
+			} else {
+				console.log(jsonRes.error);
+				// Show error message
+			}
+		} else {
+			console.log('Please fill in all the required fields');
+		}
 	}
 </script>
 
@@ -89,7 +127,7 @@
 					/>
 				</div>
 			</div>
-			<button type="submit" class="btn btn-primary">
+			<button type="submit" class="btn btn-primary" on:click={registerCandidate}>
 				<i class="bi bi-cursor-fill"></i> Submit
 			</button>
 		</form>
