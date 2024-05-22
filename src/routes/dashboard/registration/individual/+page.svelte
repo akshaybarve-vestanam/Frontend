@@ -4,14 +4,17 @@
 	import { onMount } from 'svelte';
 	import { auth_base_url } from '../../../../stores/constants';
 
+	let testDateTime = '';
 	let testTypes = ["test 1", "test 2", "test 3"];
-	let labels = []; 
+	let labels1 = ''; 
+	let labels = labels1.split("");
 	let selectedTestType = '';
 	let fullName = '';
 	let mobileNumber = '+91'; 
 	let email = '';
-	let selectedLabels = [];
-	let testDateTime = '';
+	let selectedLabels1 = '';
+	let selectedLabels = selectedLabels1.split("");
+	
 
 	// Simulate fetching test types from an API
 	onMount(async () => {
@@ -35,11 +38,12 @@
 	}
 
 	async function registerCandidate() {
-		const fullName = '';
-		const email = '';
+		//const fullName = '';
+		//const email = '';
 		const phoneNumber = '';
-
-		if (selectedTestType && fullName) {
+		console.log(fullName)
+		console.log(selectedTestType)
+		if (selectedTestType && fullName && email) {
 			const res = await fetch($auth_base_url + 'candidate/register/individual', {
 				method: 'POST',
 				credentials: 'include',
