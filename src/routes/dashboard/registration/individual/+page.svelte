@@ -35,13 +35,12 @@
 	}
 
 	async function registerCandidate() {
-		const firstName = '';
-		const lastName = '';
+		const fullName = '';
 		const email = '';
 		const phoneNumber = '';
 
 		if (selectedTestType && fullName) {
-			const res = await fetch($base_url + '/dashboard/registration/individual', {
+			const res = await fetch($auth_base_url + 'candidate/register/individual', {
 				method: 'POST',
 				credentials: 'include',
 				headers: {
