@@ -4,11 +4,7 @@
 	import { onMount } from 'svelte';
 	import { auth_base_url } from '../../../../stores/constants';
 
-	const testTypes = {
-		test1:"test 1",
-		test2:"test 2",
-		test3:"test 3"
-	}
+	let testTypes = ["test 1", "test 2", "test 3"];
 	let labels = []; 
 	let selectedTestType = '';
 	let fullName = '';
@@ -44,31 +40,28 @@
 		const email = '';
 		const phoneNumber = '';
 
-		if (firstName && lastName && email && phoneNumber) {
-			const res = await fetch($base_url + 'candidates_register', {
+		if (selectedTestType && fullName) {
+			const res = await fetch($base_url + '/dashboard/registration/individual', {
 				method: 'POST',
 				credentials: 'include',
 				headers: {
 					'content-type': 'application/json'
 				},
 				body: JSON.stringify({
-					candidateID,
-					firstName,
-					lastName,
+					selectedTestType,
+					fullName,
 					email,
 					phoneNumber,
-					address,
-					organizationID
+					selectedLabels,
+					testDateTime
 				})
 			});
 
 			const jsonRes = await res.json();
 			if (jsonRes.message) {
 				console.log(jsonRes.message);
-				// Navigate to another page or show success message
 			} else {
 				console.log(jsonRes.error);
-				// Show error message
 			}
 		} else {
 			console.log('Please fill in all the required fields');
