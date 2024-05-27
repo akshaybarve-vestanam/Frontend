@@ -1,10 +1,14 @@
 <script>
+// @ts-nocheck
+
   import { onMount } from 'svelte';
   import { Modals, closeModal, openModal, modals } from 'svelte-modals';
 	import { fade } from 'svelte/transition';
 	import Modal from '$lib/Modal.svelte';
+  import { auth_base_url } from '../../../stores/constants';
+	import Candidatemodal from '$lib/candidatemodal.svelte';
 
-  // Mock data generation
+  /* Mock data generation
   const generateMockData = () => {
     return Array.from({ length: 100 }, (_, index) => ({
       id: index + 1,
@@ -16,14 +20,40 @@
       city: ['Nagpur', 'Mumbai', 'Delhi','Bengaluru'][Math.floor(Math.random() * 3)],
       status:[ 'Active','Disabled'][Math.floor(Math.random() * 2)],
     }));
-  };
+  };*/
 
-  let Candidates = generateMockData();
+  let candidates = '';
   let selectedRows = new Set();
   let labels = ['Label 1', 'Label 2', 'Label 3']; // Example labels
   let selectedLabel = '';
-  let searchText = '';
+  let searchText = ''; 
   let status =[ 'Active','Disabled'];
+  
+
+  onMount(async () => {
+    try {
+      const response = await fetch( $auth_base_url +'/candidate', {
+        method: 'GET',
+			  credentials: 'include',
+			  headers: {
+				  'content-type': 'application/json'
+			}
+      });
+      const data = await response.json();
+      candidates = data.map((candidate, index) => ({
+        id: candidate._id,
+        candidateId : candidate.candidateId,
+        name: candidate.fullName,
+        testType: candidate.selectedTestType.join(', '),
+        dateOfTest: new Date(candidate.testDateTime).toLocaleDateString(),
+        emailid: candidate.email,
+        phonenumber: candidate.phoneNumber,
+        status: 'Registered', 
+      }));
+    } catch (error) {
+      console.error('Error fetching candidates:', error);
+    }
+  });
 
   // Functions for handling user actions
   function toggleSelection(rowId) {
@@ -32,7 +62,7 @@
 
   function toggleSelectAll(event) {
     if (event.target.checked) {
-      Candidates.forEach(Candidates => selectedRows.add(Candidates.id));
+      candidates.forEach(candidates => selectedRows.add(candidates.id));
     } else {
       selectedRows.clear();
     }
@@ -60,8 +90,12 @@
         alert("Download icon clicked");
     }
 
-    function editContent() {
-        alert("Edit icon clicked");
+    function editContent(candidate) {
+      openModal(Candidatemodal, {
+			title: `Edit Candidate`,
+      message: ``,
+      data: candidate
+		});
     }
 
 
@@ -140,32 +174,32 @@
         <tr>
             <th><input type="checkbox" on:click={toggleSelectAll}></th>
             <th>Sr No</th>
+            <th>Candidate id</th>
             <th>Name</th>
             <th>Test Type</th>
             <th>Date of Test</th>
             <th>Email id</th>
             <th>Phone number</th>
-            <th>City</th>
             <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        {#each Candidates as candidates, index (candidates.id)}
+        {#each candidates as candidate, index (candidate.id)}
         <tr>
-          <td><input type="checkbox" checked={selectedRows.has(candidates.id)} on:change={() => toggleSelection(candidates.id)}></td>
+          <td><input type="checkbox" checked={selectedRows.has(candidate.id)} on:change={() => toggleSelection(candidate.id)}></td>
           <td>{index + 1}</td>
-          <td>{candidates.name}</td>
-          <td>{candidates.testType}</td>
-          <td>{candidates.dateOfTest}</td>
-          <td>{candidates.emailid}</td>
-          <td>{candidates.phonenumber}</td>
-          <td>{candidates.city}</td>
-          <td>{candidates.status}</td>
+          <td>{candidate.candidateId}</td>
+          <td>{candidate.name}</td>
+          <td>{candidate.testType}</td>
+          <td>{candidate.dateOfTest}</td>
+          <td>{candidate.emailid}</td>
+          <td>{candidate.phonenumber}</td>
+          <td>{candidate.status}</td>
           <td>
             <i class="bi bi-envelope-fill "  on:click={handleOpen}></i> <!-- Bootstrap Icon for mail -->
             <i class="bi bi-download" on:click={downloadFile}></i> <!-- Bootstrap Icon for download -->
-             <i class="bi bi-three-dots" on:click={editContent}></i> <!-- Bootstrap Icon for edit --->
+             <i class="bi bi-three-dots" on:click={editContent(candidate)}></i> <!-- Bootstrap Icon for edit --->
         
           </td>
         </tr>

@@ -5,16 +5,19 @@
 	import { auth_base_url } from '../../../../stores/constants';
 
 	let testDateTime = '';
-	let testTypes = ["test 1", "test 2", "test 3"];
-	let labels1 = ''; 
-	let labels = labels1.split("");
+	let testTypes = ["Student" , "Professional" , "Operator" , "Fresher" , "Intern"];
+	let labels1 = '';
+	let labels = labels1.split('');
 	let selectedTestType = '';
 	let fullName = '';
-	let mobileNumber = '+91'; 
+	let phoneNumber = '+91';
 	let email = '';
 	let selectedLabels1 = '';
-	let selectedLabels = selectedLabels1.split("");
-	
+	let selectedLabels = selectedLabels1.split('');
+	let candidateid = '';
+
+	import { getNotificationsContext } from 'svelte-notifications';
+	const { addNotification } = getNotificationsContext();
 
 	// Simulate fetching test types from an API
 	onMount(async () => {
@@ -40,9 +43,10 @@
 	async function registerCandidate() {
 		//const fullName = '';
 		//const email = '';
-		const phoneNumber = '';
-		console.log(fullName)
-		console.log(selectedTestType)
+		console.log(fullName);
+		console.log(selectedTestType);
+		console.log('phoneNumber', phoneNumber);
+		console.log(candidateid);
 		if (selectedTestType && fullName && email) {
 			const res = await fetch($auth_base_url + 'candidate/register/individual', {
 				method: 'POST',
@@ -51,6 +55,7 @@
 					'content-type': 'application/json'
 				},
 				body: JSON.stringify({
+					candidateid,
 					selectedTestType,
 					fullName,
 					email,
@@ -63,9 +68,21 @@
 			const jsonRes = await res.json();
 			if (jsonRes.message) {
 				console.log(jsonRes.message);
+				addNotification({
+					text: jsonRes.message,
+					position: 'top-center',
+					type : 'success'
+				});
 			} else {
 				console.log(jsonRes.error);
 			}
+
+			selectedTestType = '';
+			fullName = '';
+			phoneNumber = '+91';
+			email = '';
+			selectedLabels = [];
+			testDateTime = '';
 		} else {
 			console.log('Please fill in all the required fields');
 		}
@@ -97,7 +114,7 @@
 					<label for="mobileNumber" class="form-label">
 						<i class="bi bi-telephone-fill"></i> Mobile Number
 					</label>
-					<input type="tel" class="form-control" id="mobileNumber" bind:value={mobileNumber} />
+					<input type="tel" class="form-control" id="mobileNumber" bind:value={phoneNumber} />
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="email" class="form-label">
