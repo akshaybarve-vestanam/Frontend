@@ -130,7 +130,8 @@
   function searchCandidates() {
   filteredCandidates = candidates.filter(candidate =>
     (candidate.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    candidate.emailid.toLowerCase().includes(searchText.toLowerCase())) 
+    candidate.emailid.toLowerCase().includes(searchText.toLowerCase())) ||
+    candidate.phonenumber.includes(searchText)
     );
 }
 
