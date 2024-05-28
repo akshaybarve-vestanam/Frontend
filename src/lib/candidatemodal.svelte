@@ -1,4 +1,5 @@
 <script>
+	// @ts-ignore
 	import { onMount } from 'svelte';
 	import { auth_base_url } from '../stores/constants';
 	import { closeModal } from 'svelte-modals';
@@ -6,6 +7,7 @@
 
     export let title
     export let message
+	// @ts-ignore
 	export let data
 
 	/*let fullName = '';
@@ -15,54 +17,39 @@
 	let candidateId = '';*/
 	let { fullName, email, phoneNumber, candidateId } = data;
 	console.log(data);
-	onMount(async () => {
-		const response = await fetch($auth_base_url + 'candidate', {
-			method: 'GET',
-			credentials: 'include',
-			headers: {
-				'content-type': 'application/json'
-			}
-		});
-		data = await response.json();
-		if (data) {
-			fullName = data.fullName;
-			email = data.email;
-			phoneNumber = data.phoneNumber;
-			candidateId = data.candidateId;
-			console.log(data);
-		}
-	});
+	// onMount(async () => {
+	// });
 
+	// @ts-ignore
 	async function editCandidate(event) {
 		event.preventDefault(); 
 
+		console.log(data);
 		if ( fullName || email || phoneNumber ) {
-            console.log(fullName);
-            console.log(email);
-            console.log(phoneNumber);
-			console.log(candidateId);
-			const res = await fetch($auth_base_url + 'candidate/edit', {
-				method: 'POST',
-				credentials: 'include',
-				headers: {
-					'content-type': 'application/json'
-				},
-				body: JSON.stringify({
-					fullName,
-					email,
-					phoneNumber,
-					candidateId
-				})
-			});
+            // @ts-ignore
+        
+			// const res = await fetch($auth_base_url + 'candidate/edit', {
+			// 	method: 'POST',
+			// 	credentials: 'include',
+			// 	headers: {
+			// 		'content-type': 'application/json'
+			// 	},
+			// 	body: JSON.stringify({
+			// 		fullName,
+			// 		email,
+			// 		phoneNumber,
+			// 		candidateId
+			// 	})
+			// });
 
-			const jsonRes = await res.json();
-			if (jsonRes.s) {
-				console.log(jsonRes.m);
-				window.alert('Candidate information updated successfully');
-			} else {
-				console.log(jsonRes.m);
-				window.alert('An error occurred: ' + jsonRes.m);
-			}
+			// const jsonRes = await res.json();
+			// if (jsonRes.s) {
+			// 	console.log(jsonRes.m);
+			// 	window.alert('Candidate information updated successfully');
+			// } else {
+			// 	console.log(jsonRes.m);
+			// 	window.alert('An error occurred: ' + jsonRes.m);
+			// }
 		} else {
 			window.alert('Please provide the candidate ID and at least one field to update');
 		}
@@ -80,19 +67,19 @@
 			<div class="row">
 				<div class="col-md-6 mb-3">
 					<label for="firstName" class="form-label">First Name</label>
-					<input type="text" class="form-control" id="firstName" bind:value={fullName} />
+					<input type="text" class="form-control" id="firstName" bind:value={data.name} />
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="email" class="form-label">Email</label>
-					<input type="email" class="form-control" id="email" bind:value={email} />
+					<input type="email" class="form-control" id="email" bind:value={data.emailid} />
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="phoneNumber" class="form-label">Phone Number</label>
-					<input type="tel" class="form-control" id="phoneNumber" bind:value={phoneNumber} />
+					<input type="tel" class="form-control" id="phoneNumber" bind:value={data.phonenumber} />
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="candidateId" class="form-label">Candidate ID</label>
-					<input type="text" class="form-control" id="candidateId" value={candidateId} disabled />
+					<input type="text" class="form-control" id="candidateId" value={data.candidateId} disabled />
 				  </div>
 			</div>
 			<button type="submit" class="btn btn-primary">Submit</button>
