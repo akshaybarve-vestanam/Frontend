@@ -22,12 +22,14 @@
     }));
   };*/
 
-  let candidates = '';
+  let candidates = [];
+  let filteredCandidates = [];
   let selectedRows = new Set();
   let labels = ['Label 1', 'Label 2', 'Label 3']; // Example labels
   let selectedLabel = '';
   let searchText = ''; 
   let status =[ 'Active','Disabled'];
+
   
 
   onMount(async () => {
@@ -50,6 +52,7 @@
         phonenumber: candidate.phoneNumber,
         status: 'Registered', 
       }));
+      filteredCandidates = candidates;
     } catch (error) {
       console.error('Error fetching candidates:', error);
     }
@@ -71,9 +74,6 @@
   function exportCandidates() {
     // Implement export functionality
   }
-
-  
-  
 
 
     let selectedLabels = [];
@@ -126,7 +126,14 @@
     }
     closeModal(); // Close the modal after sending the email
   }
-   
+
+  function searchCandidates() {
+  filteredCandidates = candidates.filter(candidate =>
+    (candidate.name.toLowerCase().includes(searchText.toLowerCase()) ||
+    candidate.emailid.toLowerCase().includes(searchText.toLowerCase())) 
+    );
+}
+
 
 
 
@@ -150,24 +157,22 @@
       </select>
     </div>
 
-    <div class="col" id = "status" >
+   <!--  <div class="col" id = "status" >
       <select class="form-select" bind:value={selectedLabel}>
         <option value="">Filter by Status</option>
         {#each status as active }
           <option value={active}>{active}</option>
         {/each}
       </select>
-    </div>
-  
- 
-  
+    </div> -->
   
     <div class="col">
-      <input type="text" class="form-control" placeholder="Search" bind:value={searchText}>
+      <input type="text" class="form-control" placeholder="Search by Name or Email" bind:value={searchText}>
+    </div>
+    <div class="col">
+      <button class="btn btn-primary" on:click={searchCandidates}>Search</button>
     </div>
   </div>
-
-  
 
 <table class="table">
     <thead>
@@ -185,9 +190,9 @@
         </tr>
     </thead>
     <tbody>
-        {#each candidates as candidate, index (candidate.id)}
+        {#each filteredCandidates as candidate, index (candidate.candidateId)}
         <tr>
-          <td><input type="checkbox" checked={selectedRows.has(candidate.id)} on:change={() => toggleSelection(candidate.id)}></td>
+          <td><input type="checkbox" checked={selectedRows.has(candidate.candidateId)} on:change={() => toggleSelection(candidate.candidateId)}></td>
           <td>{index + 1}</td>
           <td>{candidate.candidateId}</td>
           <td>{candidate.name}</td>
@@ -279,7 +284,14 @@
 		background: rgba(7, 37, 236, 0.5);
 	}
   
-
+  .search-box {
+  position: relative;
+  width: 100%; 
+}
+.search-box input {
+  width: calc(100% - 30px); 
+  padding-right: 30px; 
+}
 
 </style>
 
