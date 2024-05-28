@@ -15,8 +15,8 @@
       name: `Name ${index + 1}`,
       testType: ['Student', 'Professional'][Math.floor(Math.random() * 2)],
       dateOfTest: new Date(2022 + Math.floor(Math.random() * 2), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28)).toLocaleDateString(),
-      emailid : `name${index+1}@gmail.com`,
-      phonenumber : `9${Math.floor(100000000 + Math.random() * 900000000)}`,
+      emailId : `name${index+1}@gmail.com`,
+      phoneNumber : `9${Math.floor(100000000 + Math.random() * 900000000)}`,
       city: ['Nagpur', 'Mumbai', 'Delhi','Bengaluru'][Math.floor(Math.random() * 3)],
       status:[ 'Active','Disabled'][Math.floor(Math.random() * 2)],
     }));
@@ -48,8 +48,8 @@
         name: candidate.fullName,
         testType: candidate.selectedTestType.join(', '),
         dateOfTest: new Date(candidate.testDateTime).toLocaleDateString(),
-        emailid: candidate.email,
-        phonenumber: candidate.phoneNumber,
+        emailId: candidate.email,
+        phoneNumber: candidate.phoneNumber,
         status: 'Registered', 
       }));
       filteredCandidates = candidates;
@@ -130,8 +130,8 @@
   function searchCandidates() {
   filteredCandidates = candidates.filter(candidate =>
     (candidate.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    candidate.emailid.toLowerCase().includes(searchText.toLowerCase())) ||
-    candidate.phonenumber.includes(searchText)
+    candidate.emailId.toLowerCase().includes(searchText.toLowerCase())) ||
+    candidate.phoneNumber.includes(searchText)
     );
 }
 
@@ -199,8 +199,8 @@
           <td>{candidate.name}</td>
           <td>{candidate.testType}</td>
           <td>{candidate.dateOfTest}</td>
-          <td>{candidate.emailid}</td>
-          <td>{candidate.phonenumber}</td>
+          <td>{candidate.emailId}</td>
+          <td>{candidate.phoneNumber}</td>
           <td>{candidate.status}</td>
           <td>
             <i class="bi bi-envelope-fill "  on:click={handleOpen}></i> <!-- Bootstrap Icon for mail -->

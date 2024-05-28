@@ -28,28 +28,23 @@
 		if ( fullName || email || phoneNumber ) {
             // @ts-ignore
         
-			// const res = await fetch($auth_base_url + 'candidate/edit', {
-			// 	method: 'POST',
-			// 	credentials: 'include',
-			// 	headers: {
-			// 		'content-type': 'application/json'
-			// 	},
-			// 	body: JSON.stringify({
-			// 		fullName,
-			// 		email,
-			// 		phoneNumber,
-			// 		candidateId
-			// 	})
-			// });
+			const res = await fetch($auth_base_url + 'candidate/edit', {
+			 	method: 'POST',
+			 	credentials: 'include',
+			 	headers: {
+		 		'content-type': 'application/json'
+			 	},
+			 	body: JSON.stringify(data)
+			 });
 
-			// const jsonRes = await res.json();
-			// if (jsonRes.s) {
-			// 	console.log(jsonRes.m);
-			// 	window.alert('Candidate information updated successfully');
-			// } else {
-			// 	console.log(jsonRes.m);
-			// 	window.alert('An error occurred: ' + jsonRes.m);
-			// }
+			 const jsonRes = await res.json();
+			 if (jsonRes.s) {
+			 	console.log(jsonRes.m);
+			 	window.alert('Candidate information updated successfully');
+			 } else {
+			 	console.log(jsonRes.m);
+			 	window.alert('An error occurred: ' + jsonRes.m);
+		 }
 		} else {
 			window.alert('Please provide the candidate ID and at least one field to update');
 		}
@@ -71,11 +66,11 @@
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="email" class="form-label">Email</label>
-					<input type="email" class="form-control" id="email" bind:value={data.emailid} />
+					<input type="email" class="form-control" id="email" bind:value={data.emailId} />
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="phoneNumber" class="form-label">Phone Number</label>
-					<input type="tel" class="form-control" id="phoneNumber" bind:value={data.phonenumber} />
+					<input type="tel" class="form-control" id="phoneNumber" bind:value={data.phoneNumber} />
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="candidateId" class="form-label">Candidate ID</label>
