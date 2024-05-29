@@ -5,15 +5,18 @@
 	import { auth_base_url } from '../../../../stores/constants';
 
 	let testDateTime = '';
-	let testTypes = ["Student" , "Professional" , "Operator" , "Fresher" , "Intern"];
-	let labels1 = '';
-	let labels = labels1.split('');
+	let testTypes = ['Student', 'Professional', 'Operator', 'Fresher', 'Intern'];
+	let labels = '';
+	/*let labels1 = '';
+	let labels = labels1.split('');*/
 	let selectedTestType = '';
 	let fullName = '';
 	let phoneNumber = '+91';
 	let email = '';
-	let selectedLabels1 = '';
-	let selectedLabels = selectedLabels1.split('');
+	//let selectedLabels1 = '';
+	//let selectedLabels = selectedLabels1.split('');
+	let selectedLabels = [];
+	let tagInput = '';
 	let candidateid = '';
 
 	import { getNotificationsContext } from 'svelte-notifications';
@@ -21,26 +24,69 @@
 
 	// Simulate fetching test types from an API
 	onMount(async () => {
-		// Replace this URL with your actual API endpoint
-		const labelsResponse = await fetch($auth_base_url + 'labels', {
-			method: 'GET',
-			credentials: 'include',
-			headers: {
-				'content-type': 'application/json'
-			}
-		});
-		labels = await labelsResponse.json();
+    try {
+        const labelsResponse = await fetch($auth_base_url + 'labels', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+        labels = await labelsResponse.json();
+    } catch (d) {
+        console.error('Error fetching labels:', d);
+    }
+});
 
-		console.log('labels', labels);
-	});
-
-	// Function to handle label selection and creation logic
 	// @ts-ignore
-	function handleLabelSelectOrCreate(label) {
-		// Implement logic to select or create a label
+	async function handleLabelSelectOrCreate(event) {
+		const newLabel = event.target.value.trim();
+		if (newLabel && !labels.includes(newLabel)) {
+			try {
+				const createLabelResponse = await fetch($auth_base_url + 'labels', {
+					method: 'POST',
+					credentials: 'include',
+					headers: {
+						'content-type': 'application/json'
+					},
+					body: JSON.stringify({ labels: [newLabel] })
+				});
+				const createLabelData = await createLabelResponse.json();
+            if (createLabelData.success) {
+                labels.push(newLabel); 
+                event.target.value = ''; 
+            }
+        } catch (d) {
+            console.error('Error creating label:', d);
+        }
+		}
 	}
 
-	async function registerCandidate() {
+	function addTag(event) {
+        const trimmedTag = tagInput.trim();
+        if (trimmedTag && !selectedLabels.includes(trimmedTag)) {
+            selectedLabels = [...selectedLabels, trimmedTag];
+			handleLabelSelectOrCreate(event); 
+            tagInput = '';
+        }
+    }
+
+    function removeTag(tagToRemove) {
+        selectedLabels = selectedLabels.filter(tag => tag !== tagToRemove);
+    }
+
+    function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            addTag(event);
+        }
+    }
+
+    function handleBlur() {
+        addTag();
+    }
+
+	async function registerCandidate(event) {
+		event.preventDefault();
 		//const fullName = '';
 		//const email = '';
 		console.log(fullName);
@@ -66,15 +112,15 @@
 			});
 
 			const jsonRes = await res.json();
-			if (jsonRes.message) {
-				console.log(jsonRes.message);
+			if (jsonRes.m) {
+				console.log(jsonRes.m);
 				addNotification({
-					text: jsonRes.message,
+					text: jsonRes.m,
 					position: 'top-center',
-					type : 'success'
+					type: 'success'
 				});
 			} else {
-				console.log(jsonRes.error);
+				console.log(jsonRes.m);
 			}
 
 			selectedTestType = '';
@@ -92,7 +138,7 @@
 <div class="card">
 	<div class="card-header">Individual Registration</div>
 	<div class="card-body">
-		<form>
+		<form on:submit={registerCandidate}>
 			<div class="row">
 				<div class="col-md-6 mb-3">
 					<label for="testType" class="form-label">
@@ -123,12 +169,28 @@
 					<input type="email" class="form-control" id="email" bind:value={email} />
 				</div>
 				<div class="col-md-6 mb-3">
-					<label for="labels" class="form-label">
-						<i class="bi bi-tags-fill"></i> Label
-					</label>
-					<!-- Placeholder for multi-select labels component -->
-					<!-- Consider using a library like Select2 or a custom component for multi-select with creation on the fly -->
-				</div>
+                    <label for="labels" class="form-label">
+                        <i class="bi bi-tags-fill"></i> Labels
+                    </label>
+                    <div class="tag-container">
+                        {#each selectedLabels as tag}
+                            <div class="tag">
+                                <span>{tag}</span>
+                                <button type="button" on:click={() => removeTag(tag)}>&times;</button>
+                            </div>
+                        {/each}
+                        <div class="tag-input">
+                            <input
+                                type="text"
+                                class="form-control"
+                                bind:value={tagInput}
+                                placeholder="Add a label..."
+                                on:keydown={handleKeyDown}
+                                on:blur={handleBlur}
+                            />
+                        </div>
+                    </div>
+                </div>
 				<div class="col-md-6 mb-3">
 					<label for="testDateTime" class="form-label">
 						<i class="bi bi-calendar-event-fill"></i> Date and Time of Test
@@ -141,7 +203,7 @@
 					/>
 				</div>
 			</div>
-			<button type="submit" class="btn btn-primary" on:click={registerCandidate}>
+			<button type="submit" class="btn btn-primary">
 				<i class="bi bi-cursor-fill"></i> Submit
 			</button>
 		</form>
@@ -170,4 +232,38 @@
 		border: 1px solid black;
 		padding: 20px; /* Optional: Add padding to the body */
 	}
+	.tag-container {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .tag {
+        display: flex;
+        align-items: center;
+        background-color: #e0e0e0;
+        border-radius: 4px;
+        padding: 5px;
+        margin: 5px;
+    }
+    .tag span {
+        margin-right: 5px;
+    }
+    .tag button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+    .tag-input {
+        flex: 1;
+        min-width: 100px;
+    }
+    .tag-input input {
+        width: 100%;
+        border: none;
+        outline: none;
+        height: 38px; 
+    }
 </style>

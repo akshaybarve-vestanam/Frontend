@@ -29,8 +29,9 @@
   let selectedLabel = '';
   let searchText = ''; 
   let status =[ 'Active','Disabled'];
-
-  
+  let createdAt = '';
+  let startDate = '';
+  let endDate = '';
 
   onMount(async () => {
     try {
@@ -51,6 +52,8 @@
         emailId: candidate.email,
         phoneNumber: candidate.phoneNumber,
         status: 'Registered', 
+       // createdAt : candidate.createdAt
+        createdAt: new Date(candidate.createdAt).toISOString().split('T')[0] 
       }));
       filteredCandidates = candidates;
     } catch (error) {
@@ -128,14 +131,23 @@
   }
 
   function searchCandidates() {
-  filteredCandidates = candidates.filter(candidate =>
-    (candidate.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    candidate.emailId.toLowerCase().includes(searchText.toLowerCase())) ||
-    candidate.phoneNumber.includes(searchText)
-    );
+    const lowerCaseSearchText = searchText.toLowerCase();
+    filteredCandidates = candidates.filter(candidate => {
+        const isTextMatch = candidate.name.toLowerCase().includes(lowerCaseSearchText) ||
+                            candidate.emailId.toLowerCase().includes(lowerCaseSearchText) ||
+                            candidate.phoneNumber.includes(searchText);
+
+        if (!startDate || !endDate) {
+            return isTextMatch;
+        }
+
+        const candidateDate = new Date(candidate.createdAt);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        return isTextMatch && candidateDate >= start && candidateDate <= end;
+    });
 }
-
-
 
 
 </script>
@@ -183,7 +195,7 @@
             <th>Candidate id</th>
             <th>Name</th>
             <th>Test Type</th>
-            <th>Date of Test</th>
+            <th>Date of Registration</th>
             <th>Email id</th>
             <th>Phone number</th>
             <th>Status</th>
@@ -198,7 +210,7 @@
           <td>{candidate.candidateId}</td>
           <td>{candidate.name}</td>
           <td>{candidate.testType}</td>
-          <td>{candidate.dateOfTest}</td>
+          <td>{candidate.createdAt}</td>
           <td>{candidate.emailId}</td>
           <td>{candidate.phoneNumber}</td>
           <td>{candidate.status}</td>
