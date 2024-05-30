@@ -3,10 +3,10 @@
 	import { base_url } from '../../../../stores/constants';
 	import { onMount } from 'svelte';
 	import { auth_base_url } from '../../../../stores/constants';
-
+	import Select from 'svelte-select';
 	let testDateTime = '';
 	let testTypes = ['Student', 'Professional', 'Operator', 'Fresher', 'Intern'];
-	let labels = '';
+	let labels = [];
 	/*let labels1 = '';
 	let labels = labels1.split('');*/
 	let selectedTestType = '';
@@ -24,67 +24,115 @@
 
 	// Simulate fetching test types from an API
 	onMount(async () => {
-    try {
-        const labelsResponse = await fetch($auth_base_url + 'labels', {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'content-type': 'application/json'
-            }
-        });
-        labels = await labelsResponse.json();
-    } catch (d) {
-        console.error('Error fetching labels:', d);
-    }
-});
+		// try {
+		// 	const labelsResponse = await fetch($auth_base_url + 'labels', {
+		// 		method: 'GET',
+		// 		credentials: 'include',
+		// 		headers: {
+		// 			'content-type': 'application/json'
+		// 		}
+		// 	});
+		// 	labels = await labelsResponse.json();
+		// } catch (d) {
+		// 	console.error('Error fetching labels:', d);
+		// }
+	});
 
-	// @ts-ignore
-	async function handleLabelSelectOrCreate(event) {
-		const newLabel = event.target.value.trim();
-		if (newLabel && !labels.includes(newLabel)) {
-			try {
-				const createLabelResponse = await fetch($auth_base_url + 'labels', {
-					method: 'POST',
-					credentials: 'include',
-					headers: {
-						'content-type': 'application/json'
-					},
-					body: JSON.stringify({ labels: [newLabel] })
-				});
-				const createLabelData = await createLabelResponse.json();
-            if (createLabelData.success) {
-                labels.push(newLabel); 
-                event.target.value = ''; 
-            }
-        } catch (d) {
-            console.error('Error creating label:', d);
-        }
+	let tags = [];
+	let input = '';
+	let suggestions = [];
+
+	async function fetchSuggestions(query) {
+		try {
+			const response = await fetch($auth_base_url + `labels?q=${query}`, {
+				method: 'GET',
+				credentials: 'include',
+				headers: {
+					'content-type': 'application/json'
+				}
+			});
+			if (response.ok) {
+				const data = await response.json();
+				let temp = [];
+				console.log('Fetched suggestions:', data.d); // Debug output
+				for (let index = 0; index < data.d.length; index++) {
+					const element = data.d[index];
+					temp.push(element.name);
+				}
+				suggestions = temp;
+			} else {
+				console.error('Failed to fetch suggestions');
+				suggestions = [];
+			}
+		} catch (error) {
+			console.error('Error fetching suggestions:', error);
+			suggestions = [];
 		}
 	}
 
-	function addTag(event) {
-        const trimmedTag = tagInput.trim();
-        if (trimmedTag && !selectedLabels.includes(trimmedTag)) {
-            selectedLabels = [...selectedLabels, trimmedTag];
-			handleLabelSelectOrCreate(event); 
-            tagInput = '';
-        }
-    }
+	async function createNewLabel(label) {
+		try {
+			const response = await fetch($auth_base_url + `labels`, {
+				method: 'POST',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ name: label })
+			});
+			if (response.ok) {
+				const newLabel = await response.json();
+				return newLabel.d.name; // Assuming the API returns the created label
+			} else {
+				console.error('Error creating new label');
+				return null;
+			}
+		} catch (error) {
+			console.error('Error creating new label:', error);
+			return null;
+		}
+	}
 
-    function removeTag(tagToRemove) {
-        selectedLabels = selectedLabels.filter(tag => tag !== tagToRemove);
-    }
+	const debouncedFetchSuggestions = debounce(fetchSuggestions, 300);
 
-    function handleKeyDown(event) {
-        if (event.key === 'Enter') {
-            addTag(event);
-        }
-    }
+	function handleInput(event) {
+		input = event.target.value;
+		if (input.length > 3) {
+			debouncedFetchSuggestions(input);
+		} else {
+			suggestions = [];
+		}
+	}
 
-    function handleBlur() {
-        addTag();
-    }
+	async function addTag(tag) {
+		// Ensure tag is a string
+		if (typeof tag !== 'string') {
+			console.error('Tag is not a string:', tag);
+			return;
+		}
 
+		tag = tag.trim();
+
+		if (tag !== '' && !tags.includes(tag)) {
+			if (!suggestions.includes(tag)) {
+				tag = await createNewLabel(tag);
+				if (!tag) return; // Do not add the tag if creation fails
+			}
+			tags = [...tags, tag];
+			input = '';
+			suggestions = [];
+		}
+	}
+
+	function removeTag(tag) {
+		tags = tags.filter((t) => t !== tag);
+	}
+
+	function handleKeydown(event) {
+		if (event.key === 'Enter') {
+			addTag(input);
+		}
+	}
 	async function registerCandidate(event) {
 		event.preventDefault();
 		//const fullName = '';
@@ -133,6 +181,15 @@
 			console.log('Please fill in all the required fields');
 		}
 	}
+
+	function debounce(func, wait) {
+		let timeout;
+		return function (...args) {
+			const context = this;
+			clearTimeout(timeout);
+			timeout = setTimeout(() => func.apply(context, args), wait);
+		};
+	}
 </script>
 
 <div class="card">
@@ -169,28 +226,38 @@
 					<input type="email" class="form-control" id="email" bind:value={email} />
 				</div>
 				<div class="col-md-6 mb-3">
-                    <label for="labels" class="form-label">
-                        <i class="bi bi-tags-fill"></i> Labels
-                    </label>
-                    <div class="tag-container">
-                        {#each selectedLabels as tag}
-                            <div class="tag">
-                                <span>{tag}</span>
-                                <button type="button" on:click={() => removeTag(tag)}>&times;</button>
-                            </div>
-                        {/each}
-                        <div class="tag-input">
-                            <input
-                                type="text"
-                                class="form-control"
-                                bind:value={tagInput}
-                                placeholder="Add a label..."
-                                on:keydown={handleKeyDown}
-                                on:blur={handleBlur}
-                            />
-                        </div>
-                    </div>
-                </div>
+					<label for="labels" class="form-label">
+						<i class="bi bi-tags-fill"></i> Labels
+					</label>
+					<div class="tag-container">
+						{#each tags as tag}
+							<div class="tag">
+								<span>{tag}</span>
+								<span class="remove-tag" on:click={() => removeTag(tag)}>x</span>
+							</div>
+						{/each}
+						<div class="tag-input">
+							<input
+								type="text"
+								id="tag-input-field"
+								bind:value={input}
+								placeholder="Add a tag..."
+								on:input={handleInput}
+								on:keydown={handleKeydown}
+								autocomplete="off"
+							/>
+							{#if suggestions.length > 0}
+								<div class="suggestions">
+									{#each suggestions as suggestion}
+										<div class="suggestion" on:click={() => addTag(suggestion)}>
+											{suggestion}
+										</div>
+									{/each}
+								</div>
+							{/if}
+						</div>
+					</div>
+				</div>
 				<div class="col-md-6 mb-3">
 					<label for="testDateTime" class="form-label">
 						<i class="bi bi-calendar-event-fill"></i> Date and Time of Test
@@ -233,37 +300,68 @@
 		padding: 20px; /* Optional: Add padding to the body */
 	}
 	.tag-container {
-        display: flex;
-        flex-wrap: wrap;
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    .tag {
-        display: flex;
-        align-items: center;
-        background-color: #e0e0e0;
-        border-radius: 4px;
-        padding: 5px;
-        margin: 5px;
-    }
-    .tag span {
-        margin-right: 5px;
-    }
-    .tag button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-    }
-    .tag-input {
-        flex: 1;
-        min-width: 100px;
-    }
-    .tag-input input {
-        width: 100%;
-        border: none;
-        outline: none;
-        height: 38px; 
-    }
+		display: flex;
+		flex-wrap: wrap;
+		width: 300px;
+		padding: 5px;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		background-color: #fff;
+		margin-top: 20px;
+	}
+
+	.tag {
+		display: flex;
+		align-items: center;
+		padding: 5px;
+		margin: 5px;
+		background-color: #e0e0e0;
+		border-radius: 3px;
+	}
+
+	.tag span {
+		margin-right: 5px;
+	}
+
+	.remove-tag {
+		cursor: pointer;
+		color: #888;
+		font-size: 12px;
+		margin-left: 5px;
+	}
+
+	.tag-input {
+		display: flex;
+		flex-grow: 1;
+		position: relative;
+	}
+
+	.tag-input input {
+		border: none;
+		outline: none;
+		padding: 5px;
+		font-size: 14px;
+		flex-grow: 1;
+	}
+
+	.suggestions {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		background-color: white;
+		border: 1px solid #ccc;
+		z-index: 1000;
+		max-height: 200px;
+		overflow-y: auto;
+	}
+
+	.suggestion {
+		padding: 8px;
+		cursor: pointer;
+	}
+
+	.suggestion:hover {
+		background-color: #eee;
+	}
 </style>
