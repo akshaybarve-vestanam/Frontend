@@ -8,20 +8,6 @@
   import { auth_base_url } from '../../../stores/constants';
 	import Candidatemodal from '$lib/candidatemodal.svelte';
 
-  /* Mock data generation
-  const generateMockData = () => {
-    return Array.from({ length: 100 }, (_, index) => ({
-      id: index + 1,
-      name: `Name ${index + 1}`,
-      testType: ['Student', 'Professional'][Math.floor(Math.random() * 2)],
-      dateOfTest: new Date(2022 + Math.floor(Math.random() * 2), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28)).toLocaleDateString(),
-      emailId : `name${index+1}@gmail.com`,
-      phoneNumber : `9${Math.floor(100000000 + Math.random() * 900000000)}`,
-      city: ['Nagpur', 'Mumbai', 'Delhi','Bengaluru'][Math.floor(Math.random() * 3)],
-      status:[ 'Active','Disabled'][Math.floor(Math.random() * 2)],
-    }));
-  };*/
-
   let candidates = [];
   let filteredCandidates = [];
   let selectedRows = new Set();

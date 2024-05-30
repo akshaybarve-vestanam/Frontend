@@ -119,6 +119,7 @@
 				if (!tag) return; // Do not add the tag if creation fails
 			}
 			tags = [...tags, tag];
+			selectedLabels = [...selectedLabels, tag];
 			input = '';
 			suggestions = [];
 		}
@@ -126,6 +127,7 @@
 
 	function removeTag(tag) {
 		tags = tags.filter((t) => t !== tag);
+		selectedLabels = selectedLabels.filter((t) => t !== tag);
 	}
 
 	function handleKeydown(event) {
@@ -177,6 +179,7 @@
 			email = '';
 			selectedLabels = [];
 			testDateTime = '';
+			tags = [];
 		} else {
 			console.log('Please fill in all the required fields');
 		}
