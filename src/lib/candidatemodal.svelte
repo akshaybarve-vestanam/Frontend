@@ -48,6 +48,8 @@
 		} else {
 			window.alert('Please provide the candidate ID and at least one field to update');
 		}
+
+		closeModal();
 	}
 </script>
 

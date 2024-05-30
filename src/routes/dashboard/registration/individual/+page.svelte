@@ -310,7 +310,7 @@
 		border: 1px solid #ccc;
 		border-radius: 5px;
 		background-color: #fff;
-		margin-top: 20px;
+		margin-top: 10px;
 	}
 
 	.tag {
