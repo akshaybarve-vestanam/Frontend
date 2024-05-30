@@ -28,38 +28,60 @@
   let labels = ['Label 1', 'Label 2', 'Label 3']; // Example labels
   let selectedLabel = '';
   let searchText = ''; 
-  let status =[ 'Active','Disabled'];
+  //let status =[ 'Active','Disabled'];
   let createdAt = '';
   let startDate = '';
   let endDate = '';
 
   onMount(async () => {
+    await fetchCandidates();
+  });
+
+  async function fetchCandidates() {
     try {
-      const response = await fetch( $auth_base_url +'/candidate', {
+      const response = await fetch($auth_base_url + `candidate`, {
         method: 'GET',
-			  credentials: 'include',
-			  headers: {
-				  'content-type': 'application/json'
-			}
+        credentials: 'include',
+        headers: {
+          'content-type': 'application/json'
+        }
       });
       const data = await response.json();
       candidates = data.map((candidate, index) => ({
         id: candidate._id,
-        candidateId : candidate.candidateId,
+        candidateId: candidate.candidateId,
         name: candidate.fullName,
         testType: candidate.selectedTestType.join(', '),
         dateOfTest: new Date(candidate.testDateTime).toLocaleDateString(),
         emailId: candidate.email,
         phoneNumber: candidate.phoneNumber,
-        status: 'Registered', 
-       // createdAt : candidate.createdAt
-        createdAt: new Date(candidate.createdAt).toISOString().split('T')[0] 
+        status: 'Registered',
+        createdAt: new Date(candidate.createdAt).toISOString().split('T')[0]
       }));
       filteredCandidates = candidates;
     } catch (error) {
       console.error('Error fetching candidates:', error);
     }
-  });
+  }
+
+  function searchCandidates() {
+    const lowerCaseSearchText = searchText.toLowerCase();
+    filteredCandidates = candidates.filter(candidate => {
+        const isTextMatch = candidate.name.toLowerCase().includes(lowerCaseSearchText) ||
+                            candidate.emailId.toLowerCase().includes(lowerCaseSearchText) ||
+                            candidate.phoneNumber.includes(searchText);
+
+        if (!startDate || !endDate) {
+            return isTextMatch;
+        }
+
+        const candidateDate = new Date(candidate.createdAt);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        return isTextMatch && candidateDate >= start && candidateDate <= end;
+    });
+  }
 
   // Functions for handling user actions
   function toggleSelection(rowId) {
@@ -130,36 +152,16 @@
     closeModal(); // Close the modal after sending the email
   }
 
-  function searchCandidates() {
-    const lowerCaseSearchText = searchText.toLowerCase();
-    filteredCandidates = candidates.filter(candidate => {
-        const isTextMatch = candidate.name.toLowerCase().includes(lowerCaseSearchText) ||
-                            candidate.emailId.toLowerCase().includes(lowerCaseSearchText) ||
-                            candidate.phoneNumber.includes(searchText);
-
-        if (!startDate || !endDate) {
-            return isTextMatch;
-        }
-
-        const candidateDate = new Date(candidate.createdAt);
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-
-        return isTextMatch && candidateDate >= start && candidateDate <= end;
-    });
-}
-
-
 </script>
 
 <div class="container mt-4">
   <h2>Candidates</h2>
   <div class="mb-3 row">
     <div class="col">
-      <input type="date" class="form-control" placeholder="Start Date">
+      <input type="date" class="form-control"  bind:value={startDate} placeholder="Start Date">
     </div>
     <div class="col">
-      <input type="date" class="form-control" placeholder="End Date">
+      <input type="date" class="form-control" bind:value={endDate} placeholder="End Date">
     </div>
     <div class="col">
       <select class="form-select" bind:value={selectedLabel}>

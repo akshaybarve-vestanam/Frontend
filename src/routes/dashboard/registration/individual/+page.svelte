@@ -97,7 +97,7 @@
 
 	function handleInput(event) {
 		input = event.target.value;
-		if (input.length > 3) {
+		if (input.length >= 1) {
 			debouncedFetchSuggestions(input);
 		} else {
 			suggestions = [];
