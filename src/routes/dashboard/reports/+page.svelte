@@ -11,7 +11,7 @@
 	let candidates = [];
 	let filteredCandidates = [];
 	let selectedRows = new Set();
-	let labels = ['Label 1', 'Label 2', 'Label 3']; // Example labels
+	let labels = []; // Example labels
 	let selectedLabel = '';
 	let searchText = '';
 	//let status =[ 'Active','Disabled'];
@@ -23,6 +23,7 @@
 
 	onMount(async () => {
 		await fetchCandidates();
+		await fetchLabels();
 	});
 
 	async function fetchCandidates() {
@@ -46,14 +47,30 @@
 				status: 'Registered',
 				createdAt: new Date(candidate.createdAt).toISOString().split('T')[0]
 			}));
-			filteredCandidates = candidates;
+			filteredCandidates = candidates; 
 
-        filteredCandidates.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        filteredCandidates.sort((a, b) => new Date(a.createdAt)) - new Date(b.createdAt);
         updateDisplayedCandidates();
 		} catch (error) {
 			console.error('Error fetching candidates:', error);
 		}
 	}
+	async function fetchLabels() {
+    try {
+        const response = await fetch(`${auth_base_url}labels`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        labels = data.d.map(label => label.name); // Adjust to the response structure
+    } catch (error) {
+        console.error('Error fetching labels:', error);
+    }
+}
+
 
 	function searchCandidates() {
 		const lowerCaseSearchText = searchText.toLowerCase();
@@ -263,12 +280,12 @@
 		<div slot="backdrop" class="backdrop" transition:fade on:click={closeModal} />
 	</Modals>
 
-	<div>
+	<!--<div>
 		<p>{modals.message}</p>
 		<button on:click={() => sendMail('registration')}>Send Registration Email</button>
 		<button on:click={() => sendMail('instructions')}>Send Instructions Email</button>
 		<button on:click={() => sendMail('reports')}>Send Reports Email</button>
-	</div>
+	</div> -->
 
 	<!-- <Modals>
     <div slot="backdrop" class="backdrop" transition:fade on:click={closeModal} />

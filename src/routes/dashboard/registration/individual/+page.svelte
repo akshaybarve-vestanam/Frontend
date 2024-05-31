@@ -7,17 +7,18 @@
 	let testDateTime = '';
 	let testTypes = ['Student', 'Professional', 'Operator', 'Fresher', 'Intern'];
 	let labels = [];
-	/*let labels1 = '';
-	let labels = labels1.split('');*/
 	let selectedTestType = '';
 	let fullName = '';
 	let phoneNumber = '+91';
 	let email = '';
-	//let selectedLabels1 = '';
-	//let selectedLabels = selectedLabels1.split('');
 	let selectedLabels = [];
 	let tagInput = '';
 	let candidateid = '';
+	let errors = {
+		testType: false,
+		fullName: false,
+		email: false
+	};
 
 	import { getNotificationsContext } from 'svelte-notifications';
 	const { addNotification } = getNotificationsContext();
@@ -135,7 +136,8 @@
 			addTag(input);
 		}
 	}
-	async function registerCandidate(event) {
+	
+	/*async function registerCandidate(event) {
 		event.preventDefault();
 		//const fullName = '';
 		//const email = '';
@@ -167,7 +169,8 @@
 				addNotification({
 					text: jsonRes.m,
 					position: 'top-center',
-					type: 'success'
+					type: 'success',
+					removeAfter: 3000
 				});
 			} else {
 				console.log(jsonRes.m);
@@ -182,9 +185,63 @@
 			tags = [];
 		} else {
 			console.log('Please fill in all the required fields');
+			window.alert('Please fill in all the required fields');
+		}
+	}*/
+
+	async function registerCandidate(event) {
+		event.preventDefault();
+
+		errors.testType = !selectedTestType;
+		errors.fullName = !fullName;
+		errors.email = !email;
+
+		if (!errors.testType && !errors.fullName && !errors.email) {
+			const res = await fetch($auth_base_url + 'candidate/register/individual', {
+				method: 'POST',
+				credentials: 'include',
+				headers: {
+					'content-type': 'application/json'
+				},
+				body: JSON.stringify({
+					candidateid,
+					selectedTestType,
+					fullName,
+					email,
+					phoneNumber,
+					selectedLabels,
+					testDateTime
+				})
+			});
+
+			const jsonRes = await res.json();
+			if (jsonRes.m) {
+				addNotification({
+					text: jsonRes.m,
+					position: 'top-center',
+					type: 'success',
+					removeAfter: 3000
+				});
+			} else {
+				console.log(jsonRes.m);
+			}
+
+			selectedTestType = '';
+			fullName = '';
+			phoneNumber = '+91';
+			email = '';
+			selectedLabels = [];
+			testDateTime = '';
+			tags = [];
+		} else {
+			addNotification({
+				text: 'Please fill in all the required fields',
+				position: 'top-center',
+				type: 'error',
+				removeAfter: 3000
+			});
 		}
 	}
-
 	function debounce(func, wait) {
 		let timeout;
 		return function (...args) {
@@ -202,9 +259,9 @@
 			<div class="row">
 				<div class="col-md-6 mb-3">
 					<label for="testType" class="form-label">
-						<i class="bi bi-list-check"></i> Test Type
+						<i class="bi bi-list-check"></i> Test Type <span class="required">*</span>
 					</label>
-					<select class="form-select" id="testType" bind:value={selectedTestType}>
+					<select class="form-select" id="testType" bind:value={selectedTestType} class:error={errors.testType}>
 						{#each testTypes as testType}
 							<option value={testType}>{testType}</option>
 						{/each}
@@ -212,9 +269,9 @@
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="fullName" class="form-label">
-						<i class="bi bi-person-fill"></i> Full Name
+						<i class="bi bi-person-fill"></i> Full Name <span class="required">*</span>
 					</label>
-					<input type="text" class="form-control" id="fullName" bind:value={fullName} />
+					<input type="text" class="form-control" id="fullName" bind:value={fullName} class:error={errors.fullName}/>
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="mobileNumber" class="form-label">
@@ -224,9 +281,9 @@
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="email" class="form-label">
-						<i class="bi bi-envelope-fill"></i> Email ID
+						<i class="bi bi-envelope-fill"></i> Email ID <span class="required">*</span>
 					</label>
-					<input type="email" class="form-control" id="email" bind:value={email} />
+					<input type="email" class="form-control" id="email" bind:value={email}  class:error={errors.email}/>
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="labels" class="form-label">
@@ -234,7 +291,7 @@
 					</label>
 					<div class="tag-container">
 						{#each tags as tag}
-							<div class="tag">
+							<div class="tag ">
 								<span>{tag}</span>
 								<span class="remove-tag" on:click={() => removeTag(tag)}>x</span>
 							</div>
@@ -277,6 +334,9 @@
 				<i class="bi bi-cursor-fill"></i> Submit
 			</button>
 		</form>
+		<div class="mandatory-note">
+			<span class="required">*</span> marked fields are mandatory 
+		</div>
 	</div>
 </div>
 
@@ -305,12 +365,11 @@
 	.tag-container {
 		display: flex;
 		flex-wrap: wrap;
-		width: 300px;
-		padding: 5px;
+		width: auto;
+		padding: 3px;
 		border: 1px solid #ccc;
 		border-radius: 5px;
 		background-color: #fff;
-		margin-top: 10px;
 	}
 
 	.tag {
@@ -366,5 +425,20 @@
 
 	.suggestion:hover {
 		background-color: #eee;
+	}
+
+	.required {
+		color: red;
+	}
+
+	.mandatory-note {
+		position:absolute;
+		right: 20px;
+		bottom: 20px;
+		font-size: 14px;
+	}
+	.error {
+		border-color: red !important;
+		border-width: 2px !important;
 	}
 </style>
