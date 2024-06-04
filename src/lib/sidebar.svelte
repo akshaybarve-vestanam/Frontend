@@ -43,6 +43,22 @@
         align-items: center;
         font-family: 'Reddit Mono', monospace;
     }
+    .btn-logout {
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid white; 
+        color: black; 
+        width: 50%; 
+        padding: 10px; 
+        text-align: center; 
+        cursor: pointer;
+        font-size: 16px; 
+        border-radius: 5px; 
+        transition: background 0.3s ease; 
+    }
+    
+    .btn-logout:hover {
+        background: rgba(255, 255, 255, 0.7); 
+    }
 </style>
 
 <div class={`d-flex flex-column flex-shrink-0 p-3 bg-light sidebar`} style="width: 280px;">
@@ -96,16 +112,17 @@
         </li>
     </ul>
     <hr>
-    <div class="dropdown">
-        <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-            <!-- <img src="user-image-url.jpg" alt="" class="user-img"> -->
-            <img src="" alt="" class="user-img">
-        </a>
-        <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
-        </ul>
-    </div>
+    <button class="btn btn-logout" >Logout</button>
 </div>
+
+<!--<div class="dropdown">
+    <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="" alt="" class="user-img">
+    </a>
+    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Sign out</a></li>
+    </ul>
+</div>-->

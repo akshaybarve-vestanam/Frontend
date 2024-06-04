@@ -57,7 +57,7 @@
 	}
 	async function fetchLabels() {
     try {
-        const response = await fetch(`${auth_base_url}labels`, {
+        const response = await fetch($auth_base_url + `labels`, {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -72,8 +72,46 @@
 }
 
 
-	function searchCandidates() {
+	async function searchCandidates() {
 		const lowerCaseSearchText = searchText.toLowerCase();
+		let query = `candidate?q=${lowerCaseSearchText}`;
+
+    if (startDate) {
+        query += `&startDate=${new Date(startDate).toISOString().split('T')[0]}`;
+    }
+    if (endDate) {
+        query += `&endDate=${new Date(endDate).toISOString().split('T')[0]}`;
+    }
+    if (label) {
+        query += `&label=${label}`;
+    }
+		try {
+			const response = await fetch($auth_base_url + `${query}`, {
+				method: 'GET',
+				credentials: 'include',
+				headers: {
+					'content-type': 'application/json'
+				}
+			});
+			const data = await response.json();
+			candidates = data.map((candidate, index) => ({
+				id: candidate._id,
+				candidateId: candidate.candidateId,
+				name: candidate.fullName,
+				testType: candidate.selectedTestType.join(', '),
+				dateOfTest: new Date(candidate.testDateTime).toLocaleDateString(),
+				emailId: candidate.email,
+				phoneNumber: candidate.phoneNumber,
+				status: 'Registered',
+				createdAt: new Date(candidate.createdAt).toISOString().split('T')[0]
+			}));
+			filteredCandidates = candidates; 
+
+        filteredCandidates.sort((a, b) => new Date(a.createdAt)) - new Date(b.createdAt);
+        updateDisplayedCandidates();
+		} catch (error) {
+			console.error('Error fetching candidates:', error);
+		}
 		filteredCandidates = candidates.filter((candidate) => {
 			const isTextMatch =
 				candidate.name.toLowerCase().includes(lowerCaseSearchText) ||
@@ -255,15 +293,21 @@
 		<tbody>
 			{#each displayedCandidates as candidate, index (candidate.candidateId)}
 				<tr>
-          <td><input type="checkbox" checked={selectedRows.has(candidate.candidateId)} on:change={() => toggleSelection(candidate.candidateId)}></td>
-          <td>{(currentPage - 1) * recordsPerPage + index + 1}</td>
-          <td>{candidate.candidateId}</td>
-          <td>{candidate.name}</td>
-          <td>{candidate.testType}</td>
-          <td>{candidate.createdAt}</td>
-          <td>{candidate.emailId}</td>
-          <td>{candidate.phoneNumber}</td>
-          <td>{candidate.status}</td>
+					<td
+						><input
+							type="checkbox"
+							checked={selectedRows.has(candidate.candidateId)}
+							on:change={() => toggleSelection(candidate.candidateId)}
+						/></td
+					>
+					<td>{(currentPage - 1) * recordsPerPage + index + 1}</td>
+					<td>{candidate.candidateId}</td>
+					<td>{candidate.name}</td>
+					<td>{candidate.testType}</td>
+					<td>{candidate.createdAt}</td>
+					<td>{candidate.emailId}</td>
+					<td>{candidate.phoneNumber}</td>
+					<td>{candidate.status}</td>
 					<td>
 						<i class="bi bi-envelope-fill" on:click={handleOpen}></i>
 						<!-- Bootstrap Icon for mail -->
@@ -306,19 +350,21 @@
 		<div style="position: absolute; top: 30px; right: 30px;">
 			<button class="btn btn-primary" on:click={exportCandidates}>Export Reports</button>
 		</div>
-    <ul class="pagination">
-      <li class="page-item {currentPage === 1 ? 'disabled' : ''}">
-        <a class="page-link" href="#" on:click|preventDefault={prevPage}>Previous</a>
-      </li>
-      {#each Array(totalPages) as _, pageIndex}
-        <li class="page-item {currentPage === (pageIndex + 1) ? 'active' : ''}">
-          <a class="page-link" href="#" on:click|preventDefault={() => changePage(pageIndex + 1)}>{pageIndex + 1}</a>
-        </li>
-      {/each}
-      <li class="page-item {currentPage === totalPages ? 'disabled' : ''}">
-        <a class="page-link" href="#" on:click|preventDefault={nextPage}>Next</a>
-      </li>
-    </ul>
+		<ul class="pagination">
+			<li class="page-item {currentPage === 1 ? 'disabled' : ''}">
+				<a class="page-link" href="#" on:click|preventDefault={prevPage}>Previous</a>
+			</li>
+			{#each Array(totalPages) as _, pageIndex}
+				<li class="page-item {currentPage === pageIndex + 1 ? 'active' : ''}">
+					<a class="page-link" href="#" on:click|preventDefault={() => changePage(pageIndex + 1)}
+						>{pageIndex + 1}</a
+					>
+				</li>
+			{/each}
+			<li class="page-item {currentPage === totalPages ? 'disabled' : ''}">
+				<a class="page-link" href="#" on:click|preventDefault={nextPage}>Next</a>
+			</li>
+		</ul>
 	</div>
 </div>
 
