@@ -1,20 +1,19 @@
-<script>
+<!-- <script>
 	// @ts-nocheck
 
 	import { onMount } from 'svelte';
 	import { Modals, closeModal, openModal, modals } from 'svelte-modals';
 	import { fade } from 'svelte/transition';
 	import Modal from '$lib/Modal.svelte';
-	import { auth_base_url } from '../../../stores/constants';
 	import Candidatemodal from '$lib/candidatemodal.svelte';
+	import { auth_base_url } from '../../../stores/constants';
 
 	let candidates = [];
 	let filteredCandidates = [];
 	let selectedRows = new Set();
-	let labels = []; // Example labels
+	let labels = [];
 	let selectedLabel = '';
 	let searchText = '';
-	//let status =[ 'Active','Disabled'];
 	let createdAt = '';
 	let startDate = '';
 	let endDate = '';
@@ -36,7 +35,7 @@
 				}
 			});
 			const data = await response.json();
-			candidates = data.map((candidate, index) => ({
+			candidates = data.map((candidate) => ({
 				id: candidate._id,
 				candidateId: candidate.candidateId,
 				name: candidate.fullName,
@@ -47,44 +46,43 @@
 				status: 'Registered',
 				createdAt: new Date(candidate.createdAt).toISOString().split('T')[0]
 			}));
-			filteredCandidates = candidates; 
-
-        filteredCandidates.sort((a, b) => new Date(a.createdAt)) - new Date(b.createdAt);
-        updateDisplayedCandidates();
+			filteredCandidates = candidates;
+			filteredCandidates.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+			updateDisplayedCandidates();
 		} catch (error) {
 			console.error('Error fetching candidates:', error);
 		}
 	}
-	async function fetchLabels() {
-    try {
-        const response = await fetch($auth_base_url + `labels`, {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'content-type': 'application/json'
-            }
-        });
-        const data = await response.json();
-        labels = data.d.map(label => label.name); // Adjust to the response structure
-    } catch (error) {
-        console.error('Error fetching labels:', error);
-    }
-}
 
+	async function fetchLabels() {
+		try {
+			const response = await fetch($auth_base_url + `labels`, {
+				method: 'GET',
+				credentials: 'include',
+				headers: {
+					'content-type': 'application/json'
+				}
+			});
+			const data = await response.json();
+			labels = data.d.map(label => label.name); // Adjust to the response structure
+		} catch (error) {
+			console.error('Error fetching labels:', error);
+		}
+	}
 
 	async function searchCandidates() {
 		const lowerCaseSearchText = searchText.toLowerCase();
 		let query = `candidate?q=${lowerCaseSearchText}`;
 
-    if (startDate) {
-        query += `&startDate=${new Date(startDate).toISOString().split('T')[0]}`;
-    }
-    if (endDate) {
-        query += `&endDate=${new Date(endDate).toISOString().split('T')[0]}`;
-    }
-    if (label) {
-        query += `&label=${label}`;
-    }
+		if (startDate) {
+			query += `&startDate=${new Date(startDate).toISOString().split('T')[0]}`;
+		}
+		if (endDate) {
+			query += `&endDate=${new Date(endDate).toISOString().split('T')[0]}`;
+		}
+		if (selectedLabel) {
+			query += `&label=${selectedLabel}`;
+		}
 		try {
 			const response = await fetch($auth_base_url + `${query}`, {
 				method: 'GET',
@@ -94,7 +92,7 @@
 				}
 			});
 			const data = await response.json();
-			candidates = data.map((candidate, index) => ({
+			candidates = data.map((candidate) => ({
 				id: candidate._id,
 				candidateId: candidate.candidateId,
 				name: candidate.fullName,
@@ -105,10 +103,9 @@
 				status: 'Registered',
 				createdAt: new Date(candidate.createdAt).toISOString().split('T')[0]
 			}));
-			filteredCandidates = candidates; 
-
-        filteredCandidates.sort((a, b) => new Date(a.createdAt)) - new Date(b.createdAt);
-        updateDisplayedCandidates();
+			filteredCandidates = candidates;
+			filteredCandidates.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+			updateDisplayedCandidates();
 		} catch (error) {
 			console.error('Error fetching candidates:', error);
 		}
@@ -128,15 +125,16 @@
 
 			return isTextMatch && candidateDate >= start && candidateDate <= end;
 		});
-    totalPages = Math.ceil(filteredCandidates.length / recordsPerPage);
-  currentPage = 1; // Reset to the first page
-  updateDisplayedCandidates();
+		totalPages = Math.ceil(filteredCandidates.length / recordsPerPage);
+		currentPage = 1;
+		updateDisplayedCandidates();
 	}
-  function updateDisplayedCandidates() {
-  const startIndex = (currentPage - 1) * recordsPerPage;
-  const endIndex = startIndex + recordsPerPage;
-  displayedCandidates = filteredCandidates.slice(startIndex, endIndex);
-}
+
+	function updateDisplayedCandidates() {
+		const startIndex = (currentPage - 1) * recordsPerPage;
+		const endIndex = startIndex + recordsPerPage;
+		displayedCandidates = filteredCandidates.slice(startIndex, endIndex);
+	}
 
 	// Pagination functions
 	function changePage(page) {
@@ -253,15 +251,6 @@
 			</select>
 		</div>
 
-		<!--  <div class="col" id = "status" >
-      <select class="form-select" bind:value={selectedLabel}>
-        <option value="">Filter by Status</option>
-        {#each status as active }
-          <option value={active}>{active}</option>
-        {/each}
-      </select>
-    </div> -->
-
 		<div class="col">
 			<input
 				type="text"
@@ -293,13 +282,7 @@
 		<tbody>
 			{#each displayedCandidates as candidate, index (candidate.candidateId)}
 				<tr>
-					<td
-						><input
-							type="checkbox"
-							checked={selectedRows.has(candidate.candidateId)}
-							on:change={() => toggleSelection(candidate.candidateId)}
-						/></td
-					>
+					<td><input type="checkbox" checked={selectedRows.has(candidate.candidateId)} on:change={() => toggleSelection(candidate.candidateId)} /></td>
 					<td>{(currentPage - 1) * recordsPerPage + index + 1}</td>
 					<td>{candidate.candidateId}</td>
 					<td>{candidate.name}</td>
@@ -309,12 +292,9 @@
 					<td>{candidate.phoneNumber}</td>
 					<td>{candidate.status}</td>
 					<td>
-						<i class="bi bi-envelope-fill" on:click={handleOpen}></i>
-						<!-- Bootstrap Icon for mail -->
+						<i class="bi bi-envelope-fill" on:click={openMail}></i>
 						<i class="bi bi-download" on:click={downloadFile}></i>
-						<!-- Bootstrap Icon for download -->
-						<i class="bi bi-three-dots" on:click={editContent(candidate)}></i>
-						<!-- Bootstrap Icon for edit --->
+						<i class="bi bi-three-dots" on:click={() => editContent(candidate)}></i>
 					</td>
 				</tr>
 			{/each}
@@ -323,28 +303,6 @@
 	<Modals>
 		<div slot="backdrop" class="backdrop" transition:fade on:click={closeModal} />
 	</Modals>
-
-	<!--<div>
-		<p>{modals.message}</p>
-		<button on:click={() => sendMail('registration')}>Send Registration Email</button>
-		<button on:click={() => sendMail('instructions')}>Send Instructions Email</button>
-		<button on:click={() => sendMail('reports')}>Send Reports Email</button>
-	</div> -->
-
-	<!-- <Modals>
-    <div slot="backdrop" class="backdrop" transition:fade on:click={closeModal} />
-    <div class="modal">
-        <div class="modal-header">
-            <h2>{modals.title}</h2>
-        </div>
-        <div class="modal-body">
-            <p>{modals.message}</p>
-            <button on:click={modals.onOpenAnother}>Send Registration Email</button>
-            <button on:click={modals.onOpenAnother}>Send Instructions Email</button>
-            <button on:click={modals.onOpenAnother}>Send Reports Email</button>
-        </div>
-    </div>
-</Modals> -->
 
 	<div class="d-flex justify-content-between">
 		<div style="position: absolute; top: 30px; right: 30px;">
@@ -356,9 +314,7 @@
 			</li>
 			{#each Array(totalPages) as _, pageIndex}
 				<li class="page-item {currentPage === pageIndex + 1 ? 'active' : ''}">
-					<a class="page-link" href="#" on:click|preventDefault={() => changePage(pageIndex + 1)}
-						>{pageIndex + 1}</a
-					>
+					<a class="page-link" href="#" on:click|preventDefault={() => changePage(pageIndex + 1)}>{pageIndex + 1}</a>
 				</li>
 			{/each}
 			<li class="page-item {currentPage === totalPages ? 'disabled' : ''}">
@@ -376,20 +332,21 @@
 		font-weight: 400;
 		color: black;
 		border: 1px solid black;
-		/*width : 50%;*/
 		border-radius: 8px;
 	}
 	h2 {
 		font-family: 'Reddit Mono', monospace;
 		font-weight: 700;
 	}
-
-	.bi bi-envelope {
-		display: block;
-		width: 100px;
-		height: 20px;
+	.bi.bi-envelope-fill {
+		cursor: pointer;
 	}
-
+	.bi.bi-download {
+		cursor: pointer;
+	}
+	.bi.bi-three-dots {
+		cursor: pointer;
+	}
 	.backdrop {
 		position: fixed;
 		top: 0;
@@ -398,7 +355,6 @@
 		left: 0;
 		background: rgba(7, 37, 236, 0.5);
 	}
-
 	.search-box {
 		position: relative;
 		width: 100%;
@@ -412,22 +368,18 @@
 		list-style: none;
 		padding-left: 0;
 	}
-
 	.page-item {
 		margin: 0 5px;
 	}
-
 	.page-item.disabled .page-link {
 		pointer-events: none;
 		color: #6c757d;
 	}
-
 	.page-item.active .page-link {
 		background-color: #007bff;
 		border-color: #007bff;
 		color: white;
 	}
-
 	.page-link {
 		display: block;
 		padding: 0.5rem 0.75rem;
@@ -437,4 +389,13 @@
 		border: 1px solid #dee2e6;
 		border-radius: 0.25rem;
 	}
-</style>
+</style> -->
+
+
+
+
+
+
+
+
+
