@@ -1,5 +1,5 @@
 <script>
-    let showRegistrationSubmenu = false;
+    export let showRegistrationSubmenu = false;
 </script>
 
 <style>
@@ -9,11 +9,15 @@
         margin-right: 8px;
     }
     .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
         min-width: 200px;
         max-width: 250px;
         min-height: 100vh;
-        background : linear-gradient(to bottom, #0f0c29, #302b63, #24243e)  !important;
-       
+        background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e) !important;
+        z-index: 1000;
+        overflow-y: auto;
     }
     .sidebar.collapsed {
         min-width: 80px;
@@ -59,70 +63,67 @@
     .btn-logout:hover {
         background: rgba(255, 255, 255, 0.7); 
     }
+    .content {
+        margin-left: 200px; /* Adjust based on sidebar width */
+        padding: 20px;
+    }
 </style>
 
-<div class={`d-flex flex-column flex-shrink-0 p-3 bg-light sidebar`} style="width: 280px;">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-        <span class="fs-4">Dashboard</span>
-    </a>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item">
-            <a class="nav-link" href="#" aria-current="page" on:click={() => showRegistrationSubmenu = !showRegistrationSubmenu}>
-                <i class="bi bi-person-plus"></i>
-                Registration
-                <i class={`bi ${showRegistrationSubmenu ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
-            </a>
-            <ul class={`nav flex-column submenu collapse ${showRegistrationSubmenu ? 'show' : ''}`}>
-                <li class="nav-item">
-                    <a href="/dashboard/registration/individual" class="nav-link">
-                        <i class="bi bi-person"></i> Individual
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/dashboard/registration/bulk" class="nav-link">
-                        <i class="bi bi-people"></i> Bulk
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <a href="/dashboard/reports" class="nav-link link-dark">
-                <i class="bi bi-table"></i>
-                Candidates
-            </a>
-        </li>
-        <li>
-            <a href="/dashboard/stats" class="nav-link link-dark">
-                <i class="bi bi-graph-up"></i>
-                Stats/Analytics
-            </a>
-        </li>
-        <li>
-            <a href="/dashboard/tests" class="nav-link link-dark">
-                <i class="bi bi-graph-up"></i>
-                Tests
-            </a>
-        </li>
-        <li>
-            <a href="/dashboard/exams" class="nav-link link-dark">
-                <i class="bi bi-graph-up"></i>
-                Exams
-            </a>
-        </li>
-    </ul>
-    <hr>
-    <button class="btn btn-logout" >Logout</button>
+<div class="d-flex">
+    <div class={`d-flex flex-column flex-shrink-0 p-3 bg-light sidebar`} style="width: 280px;">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+            <span class="fs-4">Dashboard</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#" aria-current="page" on:click={() => showRegistrationSubmenu = !showRegistrationSubmenu}>
+                    <i class="bi bi-person-plus"></i>
+                    Registration
+                    <i class={`bi ${showRegistrationSubmenu ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
+                </a>
+                <ul class={`nav flex-column submenu collapse ${showRegistrationSubmenu ? 'show' : ''}`}>
+                    <li class="nav-item">
+                        <a href="/dashboard/registration/individual" class="nav-link">
+                            <i class="bi bi-person"></i> Individual
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/dashboard/registration/bulk" class="nav-link">
+                            <i class="bi bi-people"></i> Bulk
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="/dashboard/reports" class="nav-link link-dark">
+                    <i class="bi bi-table"></i>
+                    Candidates
+                </a>
+            </li>
+            <li>
+                <a href="/dashboard/stats" class="nav-link link-dark">
+                    <i class="bi bi-graph-up"></i>
+                    Stats/Analytics
+                </a>
+            </li>
+            <li>
+                <a href="/dashboard/tests" class="nav-link link-dark">
+                    <i class="bi bi-graph-up"></i>
+                    Tests
+                </a>
+            </li>
+            <li>
+                <a href="/dashboard/exams" class="nav-link link-dark">
+                    <i class="bi bi-graph-up"></i>
+                    Exams
+                </a>
+            </li>
+        </ul>
+        <hr>
+        <button class="btn btn-logout">Logout</button>
+    </div>
+    <div class="content">
+        <slot></slot>
+    </div>
 </div>
-
-<!--<div class="dropdown">
-    <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="" alt="" class="user-img">
-    </a>
-    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
-    </ul>
-</div>-->
