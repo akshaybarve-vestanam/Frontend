@@ -121,7 +121,8 @@
             </li>
         </ul>
         <hr>
-        <button class="btn btn-logout">Logout</button>
+        <a href="/login" class="btn btn-logout">Logout</a>
+
     </div>
     <div class="content">
         <slot></slot>
