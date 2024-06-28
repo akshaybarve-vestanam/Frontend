@@ -156,43 +156,45 @@
     }
 
     async function searchCandidates() {
-        const lowerCaseSearchText = searchText.toLowerCase();
-        let query = `candidate?q=${lowerCaseSearchText}`;
+    const lowerCaseSearchText = searchText.toLowerCase();
+    let query = `candidate?q=${lowerCaseSearchText}`;
 
-        if (startDate) {
-            query += `&startDate=${new Date(startDate).toISOString().split('T')[0]}`;
-        }
-        if (endDate) {
-            query += `&endDate=${new Date(endDate).toISOString().split('T')[0]}`;
-        }
-        if (selectedLabel) {
-            query += `&label=${selectedLabel}`;
-        }
-        try {
-            const response = await fetch($auth_base_url + `${query}`, {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
-            const data = await response.json();
-            candidates = data.map((candidate) => ({
-                id: candidate._id,
-                candidateId: candidate.candidateId,
-                name: candidate.fullName,
-                testType: candidate.selectedTestType.join(', '),
-                dateOfTest: new Date(candidate.testDateTime).toLocaleDateString(),
-                emailId: candidate.email,
-                phoneNumber: candidate.phoneNumber,
-                status: 'Registered',
-                createdAt: new Date(candidate.createdAt).toISOString().split('T')[0]
-            }));
-            filterCandidates();
-        } catch (error) {
-            console.error('Error fetching candidates:', error);
-        }
+    if (startDate) {
+        query += `&startDate=${new Date(startDate).toISOString().split('T')[0]}`;
     }
+    if (endDate) {
+        query += `&endDate=${new Date(endDate).toISOString().split('T')[0]}`;
+    }
+    if (selectedLabels.length > 0) {
+        query += `&label=${selectedLabels.join(',')}`;  // Join labels into a comma-separated string
+    }
+
+    try {
+        const response = await fetch($auth_base_url + `${query}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        candidates = data.map((candidate) => ({
+            id: candidate._id,
+            candidateId: candidate.candidateId,
+            name: candidate.fullName,
+            testType: candidate.selectedTestType.join(', '),
+            dateOfTest: new Date(candidate.testDateTime).toLocaleDateString(),
+            emailId: candidate.email,
+            phoneNumber: candidate.phoneNumber,
+            status: 'Registered',
+            createdAt: new Date(candidate.createdAt).toISOString().split('T')[0]
+        }));
+        filterCandidates();
+    } catch (error) {
+        console.error('Error fetching candidates:', error);
+    }
+}
+
 
     function filterCandidates() {
         const lowerCaseSearchText = searchText.toLowerCase();
