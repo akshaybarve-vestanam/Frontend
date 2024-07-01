@@ -20,7 +20,8 @@
 	let startDate = '';
 	let endDate = '';
 	let currentPage = 1;
-	const recordsPerPage = 5;
+	let limit = 5;
+	let grid;
 
 	const columns = [
 		{
@@ -149,20 +150,17 @@
 				}
 			});
 			const data = await response.json();
-			candidates = data.d.map((candidate) => ({
-				id: candidate._id,
-				candidateId: candidate.candidateId,
-				name: candidate.fullName,
-				testType: candidate.selectedTestType.join(', '),
-				dateOfTest: new Date(candidate.testDateTime).toLocaleDateString(),
-				emailId: candidate.email,
-				phoneNumber: candidate.phoneNumber,
-				status: 'Registered',
-				createdAt: new Date(candidate.createdAt).toISOString().split('T')[0]
-			}));
-			filteredCandidates = candidates;
-			filteredCandidates.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-			updateDisplayedCandidates();
+			candidates = data.d.map((candidate) => [
+				candidate.candidateId,
+				candidate.fullName,
+				candidate.email
+			]);
+			console.log(candidates);
+			grid
+				.updateConfig({
+					data: candidates
+				})
+				.forceRender();
 		} catch (error) {
 			console.error('Error fetching candidates:', error);
 		}
@@ -185,42 +183,23 @@
 	}
 
 	async function searchCandidates() {
-		const lowerCaseSearchText = searchText.toLowerCase();
-		let query = `candidate?q=${lowerCaseSearchText}`;
-
-		if (startDate) {
-			query += `&startDate=${new Date(startDate).toISOString().split('T')[0]}`;
-		}
-		if (endDate) {
-			query += `&endDate=${new Date(endDate).toISOString().split('T')[0]}`;
-		}
-		if (selectedLabels.length > 0) {
-			query += `&label=${selectedLabels.join(',')}`; // Join labels into a comma-separated string
-		}
-
-		try {
-			const response = await fetch($auth_base_url + `${query}`, {
-				method: 'GET',
-				credentials: 'include',
-				headers: {
-					'content-type': 'application/json'
-				}
-			});
-			const data = await response.json();
-			candidates = data.map((candidate) => ({
-				id: candidate._id,
-				candidateId: candidate.candidateId,
-				name: candidate.fullName,
-				testType: candidate.selectedTestType.join(', '),
-				dateOfTest: new Date(candidate.testDateTime).toLocaleDateString(),
-				emailId: candidate.email,
-				phoneNumber: candidate.phoneNumber,
-				status: 'Registered',
-				createdAt: new Date(candidate.createdAt).toISOString().split('T')[0]
-			}));
-			filterCandidates();
-		} catch (error) {
-			console.error('Error fetching candidates:', error);
+		console.log(startDate, endDate, selectedLabel);
+		if ((startDate && endDate) || selectedLabel) {
+			grid
+				.updateConfig({
+					server: {
+						url:
+							$auth_base_url +
+							`candidate?offset=0&limit=${limit}&startDate=${startDate}&endDate=${endDate}&labels=${selectedLabel}`,
+						credentials: 'include',
+						then: (data) =>
+							data.d.map((c) => {
+								return [c.candidateId, c.fullName, c.email];
+							}),
+						total: (data) => data.count
+					}
+				})
+				.forceRender();
 		}
 	}
 
@@ -289,7 +268,6 @@
 		}
 		closeModal(); // Close the modal after sending the email
 	}
-
 
 	// Function to handle label selection from suggestions
 	function selectLabel(label) {
@@ -375,14 +353,16 @@
 	</div>
 
 	<Grid
+		bind:instance={grid}
 		{columns}
 		pagination={{
-			limit: 2,
+			limit: limit,
 			server: {
-				url: (prev, page, limit) =>
-					prev.includes('order')
+				url: (prev, page, limit) => {
+					return prev.includes('order') || prev.includes('search')
 						? `${prev}&limit=${limit}&offset=${page * limit}`
-						: `${prev}?limit=${limit}&offset=${page * limit}`
+						: `${prev}?limit=${limit}&offset=${page * limit}`;
+				}
 			}
 		}}
 		server={{
@@ -399,12 +379,11 @@
 			server: {
 				url: (prev, columns) => {
 					if (!columns.length) return prev;
-
 					const col = columns[0];
 					const dir = col.direction === 1 ? 'asc' : 'desc';
 					let colName = ['id', 'name', 'email'][col.index];
 
-					return prev.includes('limit')
+					return prev.includes('limit') || prev.includes('search')
 						? `${prev}&order=${colName}&dir=${dir}`
 						: `${prev}?order=${colName}&dir=${dir}`;
 				}
