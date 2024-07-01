@@ -69,15 +69,42 @@
 		{
 			name: 'Action',
 			formatter: (cell, row) => {
-				return h(
-					'button',
-					{
-						onClick: () => {
-							alert(`Editing "${row.cells[0].data}" "${row.cells[1].data}"`);
-						}
-					},
-					'Edit'
-				);
+				return h('div', { className: 'button-container' }, [
+					// Wrap buttons in a div
+					h(
+						'button',
+						{
+							className: 'edit-button',
+							onClick: () => {
+								// Handle edit action
+								console.log(`Editing row data:`, row.cells[0].data, row.cells[1].data);
+							}
+						},
+						'Edit'
+					),
+					h(
+						'button',
+						{
+							className: 'delete-button',
+							onClick: () => {
+								// Handle delete action
+								console.log(`Deleting row data:`, row.cells[0].data, row.cells[1].data);
+							}
+						},
+						'Download'
+					),
+                    h(
+						'button',
+						{
+							className: 'delete-button',
+							onClick: () => {
+								// Handle delete action
+								console.log(`Deleting row data:`, row.cells[0].data, row.cells[1].data);
+							}
+						},
+						'Email'
+					)
+				]);
 			}
 		}
 	];
