@@ -36,6 +36,30 @@
 			sort: false
 		},
 		{
+			name: 'Test Type',
+			sort: false
+		},
+		{
+			name: 'Date of Test',
+			sort: false
+		},
+		{
+			name: 'Phone No.',
+			sort: false
+		},
+		{
+			name: 'Status',
+			sort: false
+		},
+		{
+			name: 'Label',
+			sort: false
+		},
+		{
+			name: 'Created At',
+			sort: false
+		},
+		{
 			name: 'Action',
 			formatter: (cell, row) => {
 				return h(
@@ -390,7 +414,7 @@
 			credentials: 'include',
 			then: (data) =>
 				data.d.map((c) => {
-					return [c.candidateId, c.fullName, c.email];
+					return [c.candidateId, c.fullName, c.email, c.selectedTestType, c.testDateTime, c.phoneNumber, 'Registered' , c.selectedLabels, c.createdAt ];
 				}),
 			total: (data) => data.count
 		}}
