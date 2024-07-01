@@ -42,7 +42,10 @@
 		},
 		{
 			name: 'Date of Test',
-			sort: false
+			sort: false,
+			formatter: (cell, row) => {
+				return cell ? new Date(cell).toLocaleDateString('en-GB') : '-';
+			}
 		},
 		{
 			name: 'Phone No.',
@@ -58,7 +61,10 @@
 		},
 		{
 			name: 'Created At',
-			sort: false
+			sort: false,
+			formatter: (cell, row) => {
+				return new Date(cell).toLocaleDateString('en-GB');
+			}
 		},
 		{
 			name: 'Action',
@@ -207,18 +213,29 @@
 	}
 
 	async function searchCandidates() {
-		console.log(startDate, endDate, selectedLabel);
-		if ((startDate && endDate) || selectedLabel) {
+		console.log(startDate, endDate, selectedLabels, searchText);
+		if ((startDate && endDate) || selectedLabels || searchText) {
+			selectedLabel = selectedLabels.join();
 			grid
 				.updateConfig({
 					server: {
 						url:
 							$auth_base_url +
-							`candidate?offset=0&limit=${limit}&startDate=${startDate}&endDate=${endDate}&labels=${selectedLabel}`,
+							`candidate?startDate=${startDate}&endDate=${endDate}&labels=${selectedLabel}&search=${searchText}`,
 						credentials: 'include',
 						then: (data) =>
 							data.d.map((c) => {
-								return [c.candidateId, c.fullName, c.email];
+								return [
+									c.candidateId,
+									c.fullName,
+									c.email,
+									c.selectedTestType,
+									c.testDateTime,
+									c.phoneNumber,
+									'Registered',
+									c.selectedLabels,
+									c.createdAt
+								];
 							}),
 						total: (data) => data.count
 					}
@@ -383,7 +400,7 @@
 			limit: limit,
 			server: {
 				url: (prev, page, limit) => {
-					return prev.includes('order') || prev.includes('search')
+					return prev.includes('order') || prev.includes('search') || prev.includes('labels')
 						? `${prev}&limit=${limit}&offset=${page * limit}`
 						: `${prev}?limit=${limit}&offset=${page * limit}`;
 				}
@@ -394,7 +411,17 @@
 			credentials: 'include',
 			then: (data) =>
 				data.d.map((c) => {
-					return [c.candidateId, c.fullName, c.email, c.selectedTestType, c.testDateTime, c.phoneNumber, 'Registered' , c.selectedLabels, c.createdAt ];
+					return [
+						c.candidateId,
+						c.fullName,
+						c.email,
+						c.selectedTestType,
+						c.testDateTime,
+						c.phoneNumber,
+						'Registered',
+						c.selectedLabels,
+						c.createdAt
+					];
 				}),
 			total: (data) => data.count
 		}}
@@ -407,7 +434,7 @@
 					const dir = col.direction === 1 ? 'asc' : 'desc';
 					let colName = ['id', 'name', 'email'][col.index];
 
-					return prev.includes('limit') || prev.includes('search')
+					return prev.includes('limit') || prev.includes('search') || prev.includes('labels')
 						? `${prev}&order=${colName}&dir=${dir}`
 						: `${prev}?order=${colName}&dir=${dir}`;
 				}
