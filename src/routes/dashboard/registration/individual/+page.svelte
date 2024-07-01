@@ -4,9 +4,9 @@
 	import { onMount } from 'svelte';
 	import { auth_base_url } from '../../../../stores/constants';
 	import Select from 'svelte-select';
+	import Tags from 'svelte-tags-input';
 	let testDateTime = '';
 	let testTypes = ['Student', 'Professional', 'Operator', 'Fresher', 'Intern'];
-	let labels = [];
 	let selectedTestType = '';
 	let fullName = '';
 	let phoneNumber = '+91';
@@ -19,175 +19,53 @@
 		fullName: false,
 		email: false
 	};
+	let tempSuggestions = [];
+	let tags = [];
 
 	import { getNotificationsContext } from 'svelte-notifications';
-	const { addNotification } = getNotificationsContext();
 
-	// Simulate fetching test types from an API
-	onMount(async () => {
-		// try {
-		// 	const labelsResponse = await fetch($auth_base_url + 'labels', {
-		// 		method: 'GET',
-		// 		credentials: 'include',
-		// 		headers: {
-		// 			'content-type': 'application/json'
-		// 		}
-		// 	});
-		// 	labels = await labelsResponse.json();
-		// } catch (d) {
-		// 	console.error('Error fetching labels:', d);
-		// }
-	});
-
-	let tags = [];
-	let input = '';
-	let suggestions = [];
-
-	async function fetchSuggestions(query) {
-		try {
-			const response = await fetch($auth_base_url + `labels?q=${query}`, {
-				method: 'GET',
-				credentials: 'include',
-				headers: {
-					'content-type': 'application/json'
-				}
-			});
-			if (response.ok) {
-				const data = await response.json();
-				let temp = [];
-				console.log('Fetched suggestions:', data.d); // Debug output
-				for (let index = 0; index < data.d.length; index++) {
-					const element = data.d[index];
-					temp.push(element.name);
-				}
-				suggestions = temp;
-			} else {
-				console.error('Failed to fetch suggestions');
-				suggestions = [];
+	const fetchSuggestions = async (query) => {
+		// Replace this with your actual API call
+		const response = await fetch($auth_base_url + `labels?q=${query}`, {
+			method: 'GET',
+			credentials: 'include',
+			headers: {
+				'content-type': 'application/json'
 			}
-		} catch (error) {
-			console.error('Error fetching suggestions:', error);
-			suggestions = [];
+		});
+		if (response.ok) {
+			const data = await response.json();
+			let temp = [];
+			console.log('Fetched suggestions:', data.d); // Debug output
+			for (let index = 0; index < data.d.length; index++) {
+				const element = data.d[index];
+				temp.push(element.name);
+			}
+			tempSuggestions = temp;
+			return temp;
+		} else {
+			console.error('Failed to fetch suggestions');
+			return [];
 		}
-	}
+	};
 
-	async function createNewLabel(label) {
-		try {
+	const tagAdded = async (newTag) => {
+		if (!tempSuggestions.includes(newTag)) {
 			const response = await fetch($auth_base_url + `labels`, {
 				method: 'POST',
 				credentials: 'include',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ name: label })
+				body: JSON.stringify({ name: newTag })
 			});
-			if (response.ok) {
-				const newLabel = await response.json();
-				return newLabel.d.name; // Assuming the API returns the created label
-			} else {
-				console.error('Error creating new label');
-				return null;
-			}
-		} catch (error) {
-			console.error('Error creating new label:', error);
-			return null;
 		}
-	}
+		tempSuggestions = [];
+	};
+	const { addNotification } = getNotificationsContext();
 
-	const debouncedFetchSuggestions = debounce(fetchSuggestions, 300);
-
-	function handleInput(event) {
-		input = event.target.value;
-		if (input.length >= 1) {
-			debouncedFetchSuggestions(input);
-		} else {
-			suggestions = [];
-		}
-	}
-
-	async function addTag(tag) {
-		// Ensure tag is a string
-		if (typeof tag !== 'string') {
-			console.error('Tag is not a string:', tag);
-			return;
-		}
-
-		tag = tag.trim();
-
-		if (tag !== '' && !tags.includes(tag)) {
-			if (!suggestions.includes(tag)) {
-				tag = await createNewLabel(tag);
-				if (!tag) return; // Do not add the tag if creation fails
-			}
-			tags = [...tags, tag];
-			selectedLabels = [...selectedLabels, tag];
-			input = '';
-			suggestions = [];
-		}
-	}
-
-	function removeTag(tag) {
-		tags = tags.filter((t) => t !== tag);
-		selectedLabels = selectedLabels.filter((t) => t !== tag);
-	}
-
-	function handleKeydown(event) {
-		if (event.key === 'Enter') {
-			addTag(input);
-		}
-	}
-	
-	/*async function registerCandidate(event) {
-		event.preventDefault();
-		//const fullName = '';
-		//const email = '';
-		console.log(fullName);
-		console.log(selectedTestType);
-		console.log('phoneNumber', phoneNumber);
-		console.log(candidateid);
-		if (selectedTestType && fullName && email) {
-			const res = await fetch($auth_base_url + 'candidate/register/individual', {
-				method: 'POST',
-				credentials: 'include',
-				headers: {
-					'content-type': 'application/json'
-				},
-				body: JSON.stringify({
-					candidateid,
-					selectedTestType,
-					fullName,
-					email,
-					phoneNumber,
-					selectedLabels,
-					testDateTime
-				})
-			});
-
-			const jsonRes = await res.json();
-			if (jsonRes.m) {
-				console.log(jsonRes.m);
-				addNotification({
-					text: jsonRes.m,
-					position: 'top-center',
-					type: 'success',
-					removeAfter: 3000
-				});
-			} else {
-				console.log(jsonRes.m);
-			}
-
-			selectedTestType = '';
-			fullName = '';
-			phoneNumber = '+91';
-			email = '';
-			selectedLabels = [];
-			testDateTime = '';
-			tags = [];
-		} else {
-			console.log('Please fill in all the required fields');
-			window.alert('Please fill in all the required fields');
-		}
-	}*/
+	// Simulate fetching test types from an API
+	onMount(async () => {});
 
 	async function registerCandidate(event) {
 		event.preventDefault();
@@ -209,7 +87,7 @@
 					fullName,
 					email,
 					phoneNumber,
-					selectedLabels,
+					selectedLabels: tags,
 					testDateTime
 				})
 			});
@@ -242,14 +120,7 @@
 			});
 		}
 	}
-	function debounce(func, wait) {
-		let timeout;
-		return function (...args) {
-			const context = this;
-			clearTimeout(timeout);
-			timeout = setTimeout(() => func.apply(context, args), wait);
-		};
-	}
+	
 </script>
 
 <div class="card">
@@ -261,7 +132,12 @@
 					<label for="testType" class="form-label">
 						<i class="bi bi-list-check"></i> Test Type <span class="required">*</span>
 					</label>
-					<select class="form-select" id="testType" bind:value={selectedTestType} class:error={errors.testType}>
+					<select
+						class="form-select"
+						id="testType"
+						bind:value={selectedTestType}
+						class:error={errors.testType}
+					>
 						{#each testTypes as testType}
 							<option value={testType}>{testType}</option>
 						{/each}
@@ -271,7 +147,13 @@
 					<label for="fullName" class="form-label">
 						<i class="bi bi-person-fill"></i> Full Name <span class="required">*</span>
 					</label>
-					<input type="text" class="form-control" id="fullName" bind:value={fullName} class:error={errors.fullName}/>
+					<input
+						type="text"
+						class="form-control"
+						id="fullName"
+						bind:value={fullName}
+						class:error={errors.fullName}
+					/>
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="mobileNumber" class="form-label">
@@ -283,40 +165,27 @@
 					<label for="email" class="form-label">
 						<i class="bi bi-envelope-fill"></i> Email ID <span class="required">*</span>
 					</label>
-					<input type="email" class="form-control" id="email" bind:value={email}  class:error={errors.email}/>
+					<input
+						type="email"
+						class="form-control"
+						id="email"
+						bind:value={email}
+						class:error={errors.email}
+					/>
 				</div>
 				<div class="col-md-6 mb-3">
-					<label for="labels" class="form-label">
-						<i class="bi bi-tags-fill"></i> Labels
-					</label>
-					<div class="tag-container">
-						{#each tags as tag}
-							<div class="tag ">
-								<span>{tag}</span>
-								<span class="remove-tag" on:click={() => removeTag(tag)}>x</span>
-							</div>
-						{/each}
-						<div class="tag-input">
-							<input
-								type="text"
-								id="tag-input-field"
-								bind:value={input}
-								placeholder="Add a tag..."
-								on:input={handleInput}
-								on:keydown={handleKeydown}
-								autocomplete="off"
-							/>
-							{#if suggestions.length > 0}
-								<div class="suggestions">
-									{#each suggestions as suggestion}
-										<div class="suggestion" on:click={() => addTag(suggestion)}>
-											{suggestion}
-										</div>
-									{/each}
-								</div>
-							{/if}
-						</div>
-					</div>
+					<Tags
+						class="form-control"
+						bind:tags
+						autoComplete={fetchSuggestions}
+						placeholder={'Enter Min 3 Characters'}
+						minChars={3}
+						autoCompleteKey={'name'}
+						autoCompleteShowKey={'alpha3Code'}
+						onTagAdded={tagAdded}
+						onlyUnique={true}
+						customValidation={(tag) => (tag.length >= 3 ? true : false)}
+					/>
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="testDateTime" class="form-label">
@@ -335,7 +204,7 @@
 			</button>
 		</form>
 		<div class="mandatory-note">
-			<span class="required">*</span> marked fields are mandatory 
+			<span class="required">*</span> marked fields are mandatory
 		</div>
 	</div>
 </div>
@@ -432,7 +301,7 @@
 	}
 
 	.mandatory-note {
-		position:absolute;
+		position: absolute;
 		right: 20px;
 		bottom: 20px;
 		font-size: 14px;

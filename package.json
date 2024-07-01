@@ -42,6 +42,7 @@
 		"svelte-notifications": "^0.9.98",
 		"svelte-routing": "^2.12.0",
 		"svelte-select": "^5.8.3",
-		"svelte-simple-modal": "^1.6.2"
+		"svelte-simple-modal": "^1.6.2",
+		"svelte-tags-input": "^6.0.1"
 	}
 }

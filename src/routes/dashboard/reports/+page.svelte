@@ -30,7 +30,8 @@
 		},
 		{
 			name: 'Name',
-			sort: false
+			sort: false,
+            width:'200px'
 		},
 		{
 			name: 'Email',
@@ -93,7 +94,7 @@
 						},
 						'Download'
 					),
-                    h(
+					h(
 						'button',
 						{
 							className: 'delete-button',
@@ -467,6 +468,7 @@
 				}
 			}
 		}}
+		autoWidth={true}
 	/>
 
 	<Modals>
@@ -483,30 +485,10 @@
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Reddit+Mono:wght@200..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 	@import 'https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css';
-	.table {
-		margin: 20px;
-		font-family: 'Reddit Mono', monospace;
-		font-weight: 400;
-		color: black;
-		border: 1px solid black;
-		border-radius: 8px;
-	}
 
 	h2 {
 		font-family: 'Reddit Mono', monospace;
 		font-weight: 700;
-	}
-
-	.bi.bi-envelope-fill {
-		cursor: pointer;
-	}
-
-	.bi.bi-download {
-		cursor: pointer;
-	}
-
-	.bi.bi-three-dots {
-		cursor: pointer;
 	}
 
 	.backdrop {
