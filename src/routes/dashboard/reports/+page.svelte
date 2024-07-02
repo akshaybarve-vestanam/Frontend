@@ -25,6 +25,7 @@
 	let grid;
 	let tags = [];
 	let tempSuggestions = [];
+	$: isSearchActive = startDate || endDate || selectedLabels.length > 0 || searchText;
 
 	const columns = [
 		{
@@ -78,35 +79,35 @@
 					h(
 						'button',
 						{
-							className: 'edit-button',
+							className: 'btn btn-transparent btn-sm me-1',
 							onClick: () => {
 								// Handle edit action
-								console.log(`Editing row data:`, row.cells[0].data, row.cells[1].data);
+								console.log('Editing row data:', row.cells[0].data, row.cells[1].data);
 							}
 						},
-						'Edit'
+						h('i', { className: 'bi bi-pencil-square text-dark' }) // Bootstrap edit icon with black color
 					),
 					h(
 						'button',
 						{
-							className: 'delete-button',
+							className: 'btn btn-transparent btn-sm me-1',
 							onClick: () => {
-								// Handle delete action
-								console.log(`Deleting row data:`, row.cells[0].data, row.cells[1].data);
+								// Handle download action
+								console.log('Downloading row data:', row.cells[0].data, row.cells[1].data);
 							}
 						},
-						'Download'
+						h('i', { className: 'bi bi-download text-dark' }) // Bootstrap download icon with black color
 					),
 					h(
 						'button',
 						{
-							className: 'delete-button',
+							className: 'btn btn-transparent btn-sm',
 							onClick: () => {
-								// Handle delete action
-								console.log(`Deleting row data:`, row.cells[0].data, row.cells[1].data);
+								// Handle email action
+								console.log('Emailing row data:', row.cells[0].data, row.cells[1].data);
 							}
 						},
-						'Email'
+						h('i', { className: 'bi bi-envelope text-dark' }) // Bootstrap email icon with black color
 					)
 				]);
 			}
@@ -254,6 +255,13 @@
 		}
 		closeModal(); // Close the modal after sending the email
 	}
+	function clearSearch() {
+		startDate = '';
+		endDate = '';
+		selectedLabels = [];
+		searchText = '';
+		searchCandidates();
+	}
 </script>
 
 <div class="container mt-4">
@@ -293,10 +301,14 @@
 		<div class="col">
 			<button class="btn btn-primary" on:click={searchCandidates}>Search</button>
 		</div>
+		<div class="col">
+			{#if isSearchActive}
+				<button class="btn btn-primary gogo" on:click={clearSearch}>Clear Search</button>
+			{/if}
+		</div>
 	</div>
 
 	<Grid
-		
 		bind:instance={grid}
 		{columns}
 		pagination={{
@@ -361,7 +373,6 @@
 	@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Reddit+Mono:wght@200..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 	@import 'https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css';
 
-	
 	h2 {
 		font-family: 'Reddit Mono', monospace;
 		font-weight: 700;
@@ -375,4 +386,37 @@
 		left: 0;
 		background: rgba(7, 37, 236, 0.5);
 	}
+	.btn-transparent {
+		background-color: transparent;
+		border: none;
+		padding: 5px 10px;
+	}
+
+	.btn-transparent .bi {
+		font-size: 16px;
+	}
+
+	.button-container {
+		display: flex;
+		gap: 10px;
+	}
+
+	button {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		cursor: pointer;
+	}
+
+	button i {
+		font-size: 16px;
+	}
+	.btn-danger {
+		margin-left: 985px;
+		margin-top: -64px;
+	}
+	.gogo{
+		margin-left: -110px;
+	}
+
 </style>
