@@ -29,6 +29,10 @@
 
 	const columns = [
 		{
+			name: 'No',
+			sort: false
+		},
+		{
 			name: 'Id',
 			sort: false
 		},
@@ -170,8 +174,9 @@
 							`candidate?startDate=${startDate}&endDate=${endDate}&labels=${tags}&search=${searchText}`,
 						credentials: 'include',
 						then: (data) =>
-							data.d.map((c) => {
+							data.d.map((c,index) => {
 								return [
+									index+1,
 									c.candidateId,
 									c.fullName,
 									c.email,
@@ -325,8 +330,9 @@
 			url: $auth_base_url + 'candidate',
 			credentials: 'include',
 			then: (data) =>
-				data.d.map((c) => {
+				data.d.map((c,index) => {
 					return [
+						index+1,
 						c.candidateId,
 						c.fullName,
 						c.email,
