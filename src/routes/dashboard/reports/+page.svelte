@@ -25,7 +25,7 @@
 	let grid;
 	let tags = [];
 	let tempSuggestions = [];
-	$: isSearchActive = startDate || endDate || selectedLabels.length > 0 || searchText;
+	$: isSearchActive = startDate || endDate || tags.length > 0 || searchText;
 
 	const columns = [
 		{
@@ -265,6 +265,7 @@
 		endDate = '';
 		selectedLabels = [];
 		searchText = '';
+		tags = [];
 		searchCandidates();
 	}
 </script>
