@@ -17,8 +17,8 @@
 	async function handleSubmit(event) {
 		event.preventDefault();
 
-		if (data.name && data.city && data.country && data.division) {
-			const res = await fetch(`${auth_base_url}/company`, {
+		if (data.name && data.city && data.country) {
+			const res = await fetch($auth_base_url+`/companies/register`, {
 				method: 'POST',
 				credentials: 'include',
 				headers: {
@@ -34,7 +34,7 @@
 				alert('An error occurred: ' + jsonRes.m);
 			}
 		} else {
-			alert('Please fill in all fields');
+			alert('Please fill in all required fields');
 		}
 
 		closeModal();

@@ -1,6 +1,5 @@
 <script>
 	// @ts-nocheck
-
 	import { onMount } from 'svelte';
 	import { Modals, closeModal, openModal, modals } from 'svelte-modals';
 	import { fade } from 'svelte/transition';
