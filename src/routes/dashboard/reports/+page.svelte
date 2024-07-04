@@ -78,6 +78,7 @@
 		{
 			name: 'Action',
 			formatter: (cell, row) => {
+				const candidateId = row.cells[1].data;
 				return h('div', { className: 'button-container' }, [
 					// Wrap buttons in a div
 					h(
@@ -95,9 +96,10 @@
 						'button',
 						{
 							className: 'btn btn-transparent btn-sm me-1',
-							onClick: () => {
+							onClick: async () => {
 								// Handle download action
-								console.log('Downloading row data:', row.cells[0].data, row.cells[1].data);
+								console.log('Downloading row data:', row.cells[0].data, candidateId);
+								await downloadCandidateData(candidateId);
 							}
 						},
 						h('i', { className: 'bi bi-download text-dark' }) // Bootstrap download icon with black color
@@ -149,6 +151,36 @@
 			return [];
 		}
 	};
+
+	async function downloadCandidateData(candidateId) {
+  try {
+    const response = await fetch($auth_base_url + `/download/${candidateId}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/zip',
+      },
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `${candidateId}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } else {
+      console.error('Failed to download candidate data');
+    }
+  } catch (error) {
+    console.error('Error downloading candidate data:', error);
+  }
+}
+
+
 
 	async function tagAdded(newTag) {
 		tempSuggestions = [];
