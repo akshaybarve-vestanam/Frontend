@@ -59,7 +59,7 @@
 						{
 							className: 'btn btn-transparent btn-sm me-1',
 							onClick: () => {
-								editCompany(row.cells[1].data);
+								// editCompany(row.cells[1].data);
 							}
 						},
 						h('i', { className: 'bi bi-pencil-square text-dark' })
@@ -74,7 +74,7 @@
 	});
 
 	async function fetchCompanies() {
-		const response = await fetch(auth_base_url + 'companies', {
+		const response = await fetch($auth_base_url + `companies`, {
 			method: 'GET',
 			credentials: 'include',
 			headers: {
@@ -91,14 +91,33 @@
 	}
 
 	async function searchCompanies() {
-		filteredCompanies = companies.filter((company) => {
-			return (
-				company.name.toLowerCase().includes(searchText.toLowerCase()) ||
-				company.city.toLowerCase().includes(searchText.toLowerCase()) ||
-				company.country.toLowerCase().includes(searchText.toLowerCase())
-			);
-		});
-	}
+  if (searchText) {
+    // const urlSearchParams = new URLSearchParams();
+    
+    // urlSearchParams.append('search', searchText);
+    
+    // const url = $auth_base_url + `companies?&search=${searchText}`;
+    
+    grid.updateConfig({
+      server: {
+        url: $auth_base_url + `companies?&search=${searchText}`,
+        credentials: 'include',
+        then: (data) => {
+          return data.d.map((c, index) => [
+            index + 1,
+			c.companyId,
+            c.name,
+            c.city,
+            c.country,
+			c.division
+          ]);
+        },
+        total: (data) => data.count
+      }
+    }).forceRender();
+  }
+}
+
 
 	function clearSearch() {
 		searchText = '';
@@ -106,26 +125,28 @@
 	}
 
 	function addCompany() {
-		openModal(CompanyModal, {
-			title: 'Add Company',
-			company: newCompany,
-			onSave: async (company) => {
-				const response = await fetch(auth_base_url + 'companies', {
-					method: 'POST',
-					credentials: 'include',
-					headers: {
-						'content-type': 'application/json'
-					},
-					body: JSON.stringify(company)
-				});
-				if (response.ok) {
-					await fetchCompanies();
-					closeModal();
-				} else {
-					console.error('Failed to add company');
-				}
-			}
-		});
+		 openModal(CompanyModal
+		//, {
+		// 	title: 'Add Company',
+		// 	company: newCompany,
+		// 	onSave: async (company) => {
+		// 		const response = await fetch(auth_base_url + 'companies', {
+		// 			method: 'POST',
+		// 			credentials: 'include',
+		// 			headers: {
+		// 				'content-type': 'application/json'
+		// 			},
+		// 			body: JSON.stringify(company)
+		// 		});
+		// 		if (response.ok) {
+		// 			await fetchCompanies();
+		// 			closeModal();
+		// 		} else {
+		// 			console.error('Failed to add company');
+		// 		}
+		// 	}
+		// }
+		);
 	}
 
 	function editCompany(companyId) {
@@ -181,7 +202,22 @@
 	<Grid
 		bind:instance={grid}
 		{columns}
-		data={() => filteredCompanies.map((c, index) => [index + 1, c.id, c.name, c.city, c.country, c.division])}
+		server={{
+			url: $auth_base_url + 'companies',
+			credentials: 'include',
+			then: (data) =>
+				data.d.map((c,index) => {
+					return [
+						index+1,
+						c.companyId,
+						c.name,
+						c.city,
+						c.country,
+						c.division
+					];
+				}),
+			total: (data) => data.count
+		}}
 		pagination={{
 			limit: limit,
 			server: {
