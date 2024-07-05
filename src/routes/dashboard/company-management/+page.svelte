@@ -91,33 +91,34 @@
 	}
 
 	async function searchCompanies() {
-  if (searchText) {
-    // const urlSearchParams = new URLSearchParams();
-    
-    // urlSearchParams.append('search', searchText);
-    
-    // const url = $auth_base_url + `companies?&search=${searchText}`;
-    
-    grid.updateConfig({
-      server: {
-        url: $auth_base_url + `companies?&search=${searchText}`,
-        credentials: 'include',
-        then: (data) => {
-          return data.d.map((c, index) => [
-            index + 1,
-			c.companyId,
-            c.name,
-            c.city,
-            c.country,
-			c.division
-          ]);
-        },
-        total: (data) => data.count
-      }
-    }).forceRender();
-  }
-}
+		if (searchText) {
+			// const urlSearchParams = new URLSearchParams();
 
+			// urlSearchParams.append('search', searchText);
+
+			// const url = $auth_base_url + `companies?&search=${searchText}`;
+
+			grid
+				.updateConfig({
+					server: {
+						url: $auth_base_url + `companies?search=${searchText}`,
+						credentials: 'include',
+						then: (data) => {
+							return data.d.map((c, index) => [
+								index + 1,
+								c.companyId,
+								c.name,
+								c.city,
+								c.country,
+								c.division
+							]);
+						},
+						total: (data) => data.count
+					}
+				})
+				.forceRender();
+		}
+	}
 
 	function clearSearch() {
 		searchText = '';
@@ -125,27 +126,28 @@
 	}
 
 	function addCompany() {
-		 openModal(CompanyModal
-		//, {
-		// 	title: 'Add Company',
-		// 	company: newCompany,
-		// 	onSave: async (company) => {
-		// 		const response = await fetch(auth_base_url + 'companies', {
-		// 			method: 'POST',
-		// 			credentials: 'include',
-		// 			headers: {
-		// 				'content-type': 'application/json'
-		// 			},
-		// 			body: JSON.stringify(company)
-		// 		});
-		// 		if (response.ok) {
-		// 			await fetchCompanies();
-		// 			closeModal();
-		// 		} else {
-		// 			console.error('Failed to add company');
-		// 		}
-		// 	}
-		// }
+		openModal(
+			CompanyModal
+			//, {
+			// 	title: 'Add Company',
+			// 	company: newCompany,
+			// 	onSave: async (company) => {
+			// 		const response = await fetch(auth_base_url + 'companies', {
+			// 			method: 'POST',
+			// 			credentials: 'include',
+			// 			headers: {
+			// 				'content-type': 'application/json'
+			// 			},
+			// 			body: JSON.stringify(company)
+			// 		});
+			// 		if (response.ok) {
+			// 			await fetchCompanies();
+			// 			closeModal();
+			// 		} else {
+			// 			console.error('Failed to add company');
+			// 		}
+			// 	}
+			// }
 		);
 	}
 
@@ -186,9 +188,9 @@
 				on:input={searchCompanies}
 			/>
 		</div>
-		<div class="col">
+		<!-- <div class="col">
 			<button class="btn btn-primary" on:click={searchCompanies}>Search</button>
-		</div>
+		</div> -->
 		<div class="col">
 			{#if isSearchActive}
 				<button class="btn btn-primary" on:click={clearSearch}>Clear Search</button>
@@ -206,22 +208,18 @@
 			url: $auth_base_url + 'companies',
 			credentials: 'include',
 			then: (data) =>
-				data.d.map((c,index) => {
-					return [
-						index+1,
-						c.companyId,
-						c.name,
-						c.city,
-						c.country,
-						c.division
-					];
+				data.d.map((c, index) => {
+					return [index + 1, c.companyId, c.name, c.city, c.country, c.division];
 				}),
 			total: (data) => data.count
 		}}
 		pagination={{
 			limit: limit,
 			server: {
-				url: (prev, page, limit) => `${prev}?limit=${limit}&offset=${page * limit}`
+				url: (prev, page, limit) => 
+					prev.includes('order') || prev.includes('search') || prev.includes('labels')
+						? `${prev}&limit=${limit}&offset=${page * limit}`
+						: `${prev}?limit=${limit}&offset=${page * limit}`
 			}
 		}}
 		autoWidth={true}
