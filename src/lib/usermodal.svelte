@@ -10,13 +10,35 @@
 		fullName: '',
 		email: '',
 		mobileNumber: '',
-		companies: ''
+		companies: []
 	};
+
+	let companies = [];
+	onMount(async () => {
+		await fetchCompanies();
+	});
+
+	async function fetchCompanies() {
+		const response = await fetch($auth_base_url + `companies`, {
+			method: 'GET',
+			credentials: 'include',
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+
+		if (response.ok) {
+			const result = await response.json();
+			companies = result.d;
+		} else {
+			console.error('Failed to fetch companies');
+		}
+	}
 
 	async function handleSubmit(event) {
 		event.preventDefault();
 
-		if (data.fullName && data.email && data.mobileNumber) {
+		if (data.fullName && data.email && data.mobileNumber && data.companies.length) {
 			const res = await fetch($auth_base_url + `/users/register`, {
 				method: 'POST',
 				credentials: 'include',
@@ -58,11 +80,20 @@
 				</div>
 				<div class="form-group">
 					<label for="mobileNumber">Mobile Number</label>
-					<input type="text" id="mobileNumber" class="form-control" bind:value={data.mobileNumber} />
+					<input
+						type="text"
+						id="mobileNumber"
+						class="form-control"
+						bind:value={data.mobileNumber}
+					/>
 				</div>
 				<div class="form-group">
 					<label for="companies">Companies</label>
-					<input type="text" id="companies" class="form-control" bind:value={data.companies} />
+					<select id="companies" class="form-control" bind:value={data.companies} multiple>
+						{#each companies as company}
+							<option value={company._id}>{company.name}</option>
+						{/each}
+					</select>
 				</div>
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</form>
