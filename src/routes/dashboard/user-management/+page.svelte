@@ -104,7 +104,7 @@
 							u.fullName,
 							u.email,
 							u.mobileNumber,
-							u.companies.map(c => c.name).join(', ') // Extract and join company names
+							u.companies
 						]);
 					},
 					total: (data) => data.count
