@@ -10,7 +10,7 @@
 		fullName: '',
 		email: '',
 		mobileNumber: '',
-		companies: []
+		companies: ''
 	};
 
 	async function handleSubmit(event) {
@@ -62,7 +62,7 @@
 				</div>
 				<div class="form-group">
 					<label for="companies">Companies</label>
-					<input type="text" id="companies" class="form-control" bind:value={data.companies} placeholder="Comma-separated list of companies" />
+					<input type="text" id="companies" class="form-control" bind:value={data.companies} />
 				</div>
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</form>

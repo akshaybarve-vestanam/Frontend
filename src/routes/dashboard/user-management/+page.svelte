@@ -104,7 +104,7 @@
 								u.fullName,
 								u.email,
 								u.mobileNumber,
-								u.companies.join(', ')
+								u.companies
 							]);
 						},
 						total: (data) => data.count
@@ -129,7 +129,7 @@
 							u.fullName,
 							u.email,
 							u.mobileNumber,
-							u.companies.join(', ')
+							u.companies
 						]);
 					},
 					total: (data) => data.count
@@ -202,7 +202,7 @@
 			credentials: 'include',
 			then: (data) =>
 				data.d.map((u, index) => {
-					return [index + 1, u.userId, u.fullName, u.email, u.mobileNumber, u.companies.join(', ')];
+					return [index + 1, u.userId, u.fullName, u.email, u.mobileNumber, u.companies];
 				}),
 			total: (data) => data.count
 		}}
