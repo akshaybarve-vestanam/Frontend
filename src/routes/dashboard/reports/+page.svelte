@@ -73,7 +73,7 @@
 		{
 			name: 'Action',
 			formatter: (cell, row) => {
-				return h('div', { className: 'button-container' }, [
+				return h('div', { className: 'button-container-grid ' }, [
 					// Wrap buttons in a div
 					h(
 						'button',
@@ -120,6 +120,12 @@
 
 	let input = '';
 	let suggestions = [];
+
+	function handleEdit(event, row, column) {
+		console.log('=============');
+		console.log(event, row, column);
+		console.log('=============');
+	}
 
 	const fetchSuggestions = async (query) => {
 		// Replace this with your actual API call
@@ -296,7 +302,6 @@
 	</div>
 
 	<Grid
-		
 		bind:instance={grid}
 		{columns}
 		pagination={{
@@ -361,7 +366,10 @@
 	@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Reddit+Mono:wght@200..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 	@import 'https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css';
 
-	
+	:global(.button-container-grid) {
+		display: flex;
+	}
+
 	h2 {
 		font-family: 'Reddit Mono', monospace;
 		font-weight: 700;
