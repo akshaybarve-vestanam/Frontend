@@ -91,28 +91,28 @@
 	}
 
 	async function searchUsers() {
-		if (searchText) {
-			grid
-				.updateConfig({
-					server: {
-						url: $auth_base_url + `users?search=${searchText}`,
-						credentials: 'include',
-						then: (data) => {
-							return data.d.map((u, index) => [
-								index + 1,
-								u.userId,
-								u.fullName,
-								u.email,
-								u.mobileNumber,
-								u.companies
-							]);
-						},
-						total: (data) => data.count
-					}
-				})
-				.forceRender();
-		}
+	if (searchText) {
+		grid
+			.updateConfig({
+				server: {
+					url: $auth_base_url + `users?search=${searchText}`,
+					credentials: 'include',
+					then: (data) => {
+						return data.d.map((u, index) => [
+							index + 1,
+							u.userId,
+							u.fullName,
+							u.email,
+							u.mobileNumber,
+							u.companies.map(c => c.name).join(', ') // Extract and join company names
+						]);
+					},
+					total: (data) => data.count
+				}
+			})
+			.forceRender();
 	}
+}
 
 	function clearSearch() {
 		searchText = '';
