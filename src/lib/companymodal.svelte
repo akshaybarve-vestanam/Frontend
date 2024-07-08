@@ -44,8 +44,8 @@
 <div class="modal-container">
 	<div class="modal-content">
 		<div class="modal-header">
-			<h2>{title}</h2>
-			<p>{message}</p>
+			<h2>Add Company</h2>
+			
 			<button class="close-btn" on:click={closeModal}>&times;</button>
 		</div>
 		<div class="modal-body">

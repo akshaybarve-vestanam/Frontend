@@ -123,6 +123,25 @@
 	function clearSearch() {
 		searchText = '';
 		filteredCompanies = companies;
+		grid
+			.updateConfig({
+				server: {
+					url: $auth_base_url + 'companies',
+					credentials: 'include',
+					then: (data) => {
+						return data.d.map((c, index) => [
+							index + 1,
+							c.companyId,
+							c.name,
+							c.city,
+							c.country,
+							c.division
+						]);
+					},
+					total: (data) => data.count
+				}
+			})
+			.forceRender();
 	}
 
 	function addCompany() {
@@ -188,9 +207,9 @@
 				on:input={searchCompanies}
 			/>
 		</div>
-		<!-- <div class="col">
+		<div class="col">
 			<button class="btn btn-primary" on:click={searchCompanies}>Search</button>
-		</div> -->
+		</div>
 		<div class="col">
 			{#if isSearchActive}
 				<button class="btn btn-primary" on:click={clearSearch}>Clear Search</button>
