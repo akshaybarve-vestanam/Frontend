@@ -47,7 +47,7 @@
 			sort: false
 		},
 		{
-			name: 'Companies',
+			name: 'Company',
 			sort: false
 		},
 		{
@@ -83,7 +83,10 @@
 		});
 		if (response.ok) {
 			const data = await response.json();
-			users = data;
+			users = data.map(user => ({
+            ...user,
+            companies: user.company ? user.company.name : 'No Company' // Map the company name for display
+        }));
 			filteredUsers = data;
 		} else {
 			console.error('Failed to fetch users');

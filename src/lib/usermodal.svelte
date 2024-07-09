@@ -10,7 +10,7 @@
 		fullName: '',
 		email: '',
 		mobileNumber: '',
-		companies: []
+		company: ''
 	};
 
 	let companies = [];
@@ -38,7 +38,7 @@
 	async function handleSubmit(event) {
 		event.preventDefault();
 
-		if (data.fullName && data.email && data.mobileNumber && data.companies.length) {
+		if (data.fullName && data.email && data.mobileNumber && data.company) {
 			const res = await fetch($auth_base_url + `/users/register`, {
 				method: 'POST',
 				credentials: 'include',
@@ -88,9 +88,10 @@
 					/>
 				</div>
 				<div class="form-group">
-					<label for="companies">Companies</label>
-					<select id="companies" class="form-control" bind:value={data.companies} multiple>
-						{#each companies as company}
+					<label for="company">Company</label>
+					<select id="company" class="form-control" bind:value={data.company}>
+						<option value="" disabled>Select a company</option>
+                 		{#each companies as company}
 							<option value={company._id}>{company.name}</option>
 						{/each}
 					</select>
