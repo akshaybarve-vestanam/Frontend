@@ -113,7 +113,7 @@
                     Company Management
                 </a>
             </li>
-            <li>
+            <!-- <li>
                 <a href="/dashboard/stats" class="nav-link link-dark">
                     <i class="bi bi-graph-up"></i>
                     Stats/Analytics
@@ -130,7 +130,7 @@
                     <i class="bi bi-graph-up"></i>
                     Exams
                 </a>
-            </li>
+            </li> -->
         </ul>
         <hr>
         <a href="/login" class="btn btn-logout">Logout</a>
