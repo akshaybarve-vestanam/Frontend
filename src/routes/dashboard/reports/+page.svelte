@@ -110,7 +110,7 @@
 							className: 'btn btn-transparent btn-sm',
 							onClick: () => {
 								// Handle email action
-								console.log('Emailing row data:', row.cells[0].data, row.cells[1].data);
+								openEmailModal({ email: row.cells[3].data });
 							}
 						},
 						h('i', { className: 'bi bi-envelope text-dark' }) // Bootstrap email icon with black color
@@ -250,13 +250,13 @@
 		return selectedLabel.includes(label);
 	}
 
-	function openMail() {
-		alert('Mail icon clicked');
-	}
+	// function openMail() {
+	// 	alert('Mail icon clicked');
+	// }
 
-	function downloadFile() {
-		alert('Download icon clicked');
-	}
+	// function downloadFile() {
+	// 	alert('Download icon clicked');
+	// }
 
 	function editContent(candidate) {
 		openModal(Candidatemodal, {
@@ -266,15 +266,15 @@
 		});
 	}
 
-	function handleOpen() {
-		openModal(Modal, {
-			title: `Send Mail #${$modals.length + 1}`,
-			message: 'This is an alert',
-			onOpenAnother: () => {
-				handleOpen();
-			}
-		});
-	}
+	// function handleOpen() {
+	// 	openModal(Modal, {
+	// 		title: `Send Mail #${$modals.length + 1}`,
+	// 		message: 'This is an alert',
+	// 		onOpenAnother: () => {
+	// 			handleOpen();
+	// 		}
+	// 	});
+	// }
 
 	function sendMail(option) {
 		switch (option) {
@@ -300,6 +300,20 @@
 		tags = [];
 		searchCandidates();
 	}
+
+	function openEmailModal(emailData) {
+    openModal(Modal, {
+      title: 'Email Options',
+      message: 'Choose the type of email to send',
+      onOpenAnother: () => {
+        openModal(Modal, {
+          title: 'Another Modal',
+          message: 'This is another modal'
+        });
+      },
+      emailData // Pass the email data to the modal
+    });
+  }
 </script>
 
 <div class="container mt-4">
