@@ -1,6 +1,7 @@
 <script>
 	import { closeModal, closeAllModals, openModal, modals } from 'svelte-modals';
 	import { fly } from 'svelte/transition';
+	import { auth_base_url } from '../stores/constants';
 
 	export let isOpen;
 	export let title;
@@ -12,15 +13,38 @@
 	let selectedOption = '';
 	let to = '';
 	let cc = '';
-	let bcc = '';
-	let emailBody = '';
+	
 
-	function sendEmail() {
-		console.log('Selected Option:', selectedOption);
-		console.log('To:', to);
-		console.log('CC:', cc);
-		console.log('BCC:', bcc);
-		console.log('Body:', emailBody);
+	async function sendEmail() {
+		const emailData = {
+			selectedOption,
+			to,
+			cc,
+		
+		
+	};
+
+
+	try {
+			const response = await fetch($auth_base_url+ '/send-email', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(emailData)
+			});
+
+			const result = await response.json();
+
+			if (response.ok) {
+				console.log('Email sent successfully:', result);
+			} else {
+				console.error('Error sending email:', result);
+			}
+		} catch (error) {
+			console.error('Failed to send email:', error);
+		}
+
 		closeModal();
 	}
 </script>
@@ -43,30 +67,23 @@
 					</select>
 				</div>
 				{#if selectedOption}
-					<div class="email-options">
-						<label for="to">To:</label>
-						<input type="text" id="to" bind:value={to} />
+				<div class="email-options">
+					<label for="to">To:</label>
+					<input type="text" id="to" bind:value={to} />
 
-						<label for="cc">CC:</label>
-						<input type="text" id="cc" bind:value={cc} />
-
-						<label for="bcc">BCC:</label>
-						<input type="text" id="bcc" bind:value={bcc} />
-					</div>
-					<div class="email-body">
-						<label for="email-body">Email Body:</label>
-						<textarea id="email-body" bind:value={emailBody}></textarea>
-					</div>
-					<div class="actions">
-						{#if stackIndex > 1}
-							<button on:click={closeModal}>Close One</button>
-							<button on:click={closeAllModals}>Close All</button>
-						{:else}
-							<button on:click={closeModal}>Close</button>
-						{/if}
-						<button on:click={sendEmail}>Send Email</button>
-						<button on:click={onOpenAnother}>Open Another</button>
-					</div>
+					<label for="cc">CC:</label>
+					<input type="text" id="cc" bind:value={cc} />
+				</div>
+				<div class="actions">
+					{#if stackIndex > 1}
+						<button on:click={closeModal}>Close One</button>
+						<button on:click={closeAllModals}>Close All</button>
+					{:else}
+						<button on:click={closeModal}>Close</button>
+					{/if}
+					<button on:click={sendEmail}>Send Email</button>
+					<button on:click={onOpenAnother}>Open Another</button>
+				</div>
 				{/if}
 			</div>
 		</div>
