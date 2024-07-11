@@ -39,11 +39,38 @@
 		{
 			name: 'Name',
 			sort: false,
-			width: '200px'
+			formatter: (cell, row) => {
+				if (row.editMode) {
+					// Show input field for editing
+					return h('input', {
+						type: 'text',
+						value: row.cells[2].data,
+						oninput: (event) => {
+							row.cells[2].data = event.target.value; // Update cell data
+						}
+					});
+				} else {
+					return cell; // Display normal cell data
+				}
+			}
 		},
 		{
 			name: 'Email',
-			sort: false
+			sort: false,
+			formatter: (cell, row) => {
+				if (row.editMode) {
+					// Show input field for editing
+					return h('input', {
+						type: 'email',
+						value: row.cells[3].data,
+						oninput: (event) => {
+							row.cells[3].data = event.target.value; // Update cell data
+						}
+					});
+				} else {
+					return cell; // Display normal cell data
+				}
+			}
 		},
 		{
 			name: 'Test Type',
@@ -58,7 +85,21 @@
 		},
 		{
 			name: 'Phone No.',
-			sort: false
+			sort: false,
+			formatter: (cell, row) => {
+				if (row.editMode) {
+					// Show input field for editing
+					return h('input', {
+						type: 'text',
+						value: row.cells[6].data,
+						oninput: (event) => {
+							row.cells[6].data = event.target.value; // Update cell data
+						}
+					});
+				} else {
+					return cell; // Display normal cell data
+				}
+			}
 		},
 		{
 			name: 'Status',
@@ -78,44 +119,51 @@
 		{
 			name: 'Action',
 			formatter: (cell, row) => {
-				const candidateId = row.cells[1].data;
-				return h('div', { className: 'button-container' }, [
-					// Wrap buttons in a div
-					h(
+				if (row.editMode) {
+					return h(
 						'button',
 						{
-							className: 'btn btn-transparent btn-sm me-1',
-							onClick: () => {
-								// Handle edit action
-								console.log('Editing row data:', row.cells[0].data, row.cells[1].data);
-							}
+							className: 'btn btn-primary',
+							onclick: () => saveChanges(row)
 						},
-						h('i', { className: 'bi bi-pencil-square text-dark' }) // Bootstrap edit icon with black color
-					),
-					h(
-						'button',
-						{
-							className: 'btn btn-transparent btn-sm me-1',
-							onClick: async () => {
-								// Handle download action
-								console.log('Downloading row data:', row.cells[0].data, candidateId);
-								await downloadCandidateData(candidateId);
-							}
-						},
-						h('i', { className: 'bi bi-download text-dark' }) // Bootstrap download icon with black color
-					),
-					h(
-						'button',
-						{
-							className: 'btn btn-transparent btn-sm',
-							onClick: () => {
-								// Handle email action
-								openEmailModal({ email: row.cells[3].data });
-							}
-						},
-						h('i', { className: 'bi bi-envelope text-dark' }) // Bootstrap email icon with black color
-					)
-				]);
+						'Save'
+					);
+				} else {
+					return h('div', { className: 'button-container' }, [
+						// Edit button
+						h(
+							'button',
+							{
+								className: 'btn btn-transparent btn-sm me-1',
+								onclick: () => toggleEditMode(row)
+							},
+							h('i', { className: 'bi bi-pencil-square text-dark' })
+						),
+						h(
+							'button',
+							{
+								className: 'btn btn-transparent btn-sm me-1',
+								onClick: async () => {
+									// Handle download action
+									console.log('Downloading row data:', row.cells[0].data, candidateId);
+									await downloadCandidateData(candidateId);
+								}
+							},
+							h('i', { className: 'bi bi-download text-dark' }) // Bootstrap download icon with black color
+						),
+						h(
+							'button',
+							{
+								className: 'btn btn-transparent btn-sm',
+								onClick: () => {
+									// Handle email action
+									openEmailModal({ email: row.cells[3].data });
+								}
+							},
+							h('i', { className: 'bi bi-envelope text-dark' }) // Bootstrap email icon with black color
+						)
+					]);
+				}
 			}
 		}
 	];
@@ -153,34 +201,32 @@
 	};
 
 	async function downloadCandidateData(candidateId) {
-  try {
-    const response = await fetch($auth_base_url + `/download/${candidateId}`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/zip',
-      },
-    });
+		try {
+			const response = await fetch($auth_base_url + `/download/${candidateId}`, {
+				method: 'GET',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/zip'
+				}
+			});
 
-    if (response.ok) {
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = `${candidateId}.zip`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } else {
-      console.error('Failed to download candidate data');
-    }
-  } catch (error) {
-    console.error('Error downloading candidate data:', error);
-  }
-}
-
-
+			if (response.ok) {
+				const blob = await response.blob();
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = url;
+				a.download = `${candidateId}.zip`;
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+			} else {
+				console.error('Failed to download candidate data');
+			}
+		} catch (error) {
+			console.error('Error downloading candidate data:', error);
+		}
+	}
 
 	async function tagAdded(newTag) {
 		tempSuggestions = [];
@@ -206,9 +252,9 @@
 							`candidate?startDate=${startDate}&endDate=${endDate}&labels=${tags}&search=${searchText}`,
 						credentials: 'include',
 						then: (data) =>
-							data.d.map((c,index) => {
+							data.d.map((c, index) => {
 								return [
-									index+1,
+									index + 1,
 									c.candidateId,
 									c.fullName,
 									c.email,
@@ -224,6 +270,42 @@
 					}
 				})
 				.forceRender();
+		}
+	}
+
+	function toggleEditMode(row) {
+		row.editMode = !row.editMode; 
+		grid.forceRender(); 
+	}
+
+	async function saveChanges(row) {
+		const candidateId = row.cells[1].data; 
+		const updatedData = {
+			fullName: row.cells[2].data,
+			email: row.cells[3].data,
+			phoneNumber: row.cells[6].data
+			// Add other fields as needed
+		};
+
+		try {
+			const response = await fetch($auth_base_url+'/update/${candidateId}', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(updatedData)
+			});
+
+			if (response.ok) {
+				console.log('Candidate updated successfully');
+				toggleEditMode(row); 
+			} else {
+				console.error('Failed to update candidate');
+			
+			}
+		} catch (error) {
+			console.error('Error updating candidate:', error);
+			
 		}
 	}
 
@@ -302,18 +384,18 @@
 	}
 
 	function openEmailModal(emailData) {
-    openModal(Modal, {
-      title: 'Email Options',
-      message: 'Choose the type of email to send',
-      onOpenAnother: () => {
-        openModal(Modal, {
-          title: 'Another Modal',
-          message: 'This is another modal'
-        });
-      },
-      emailData // Pass the email data to the modal
-    });
-  }
+		openModal(Modal, {
+			title: 'Email Options',
+			message: 'Choose the type of email to send',
+			onOpenAnother: () => {
+				openModal(Modal, {
+					title: 'Another Modal',
+					message: 'This is another modal'
+				});
+			},
+			emailData // Pass the email data to the modal
+		});
+	}
 </script>
 
 <div class="container mt-4">
@@ -377,9 +459,9 @@
 			url: $auth_base_url + 'candidate',
 			credentials: 'include',
 			then: (data) =>
-				data.d.map((c,index) => {
+				data.d.map((c, index) => {
 					return [
-						index+1,
+						index + 1,
 						c.candidateId,
 						c.fullName,
 						c.email,
@@ -468,8 +550,7 @@
 		margin-left: 985px;
 		margin-top: -64px;
 	}
-	.gogo{
+	.gogo {
 		margin-left: -110px;
 	}
-
 </style>
