@@ -221,28 +221,28 @@
 	</div>
 
 	<Grid
-		bind:instance={grid}
-		{columns}
-		server={{
-			url: $auth_base_url + 'companies',
-			credentials: 'include',
-			then: (data) =>
-				data.d.map((c, index) => {
-					return [index + 1, c.companyId, c.name, c.city, c.country, c.division];
-				}),
-			total: (data) => data.count
-		}}
-		pagination={{
-			limit: limit,
-			server: {
-				url: (prev, page, limit) => 
-					prev.includes('order') || prev.includes('search') || prev.includes('labels')
-						? `${prev}&limit=${limit}&offset=${page * limit}`
-						: `${prev}?limit=${limit}&offset=${page * limit}`
-			}
-		}}
-		autoWidth={true}
-	/>
+    bind:instance={grid}
+    {columns}
+    server={{
+        url: $auth_base_url + 'companies',
+        credentials: 'include',
+        then: (data) =>
+            data.d.map((c, index) => {
+                return [index + 1, c.companyId, c.name, c.city, c.country, c.division];
+            }),
+        total: (data) => data.count
+    }}
+    pagination={{
+        limit: limit,
+        server: {
+            url: (prev, page, limit) => 
+                prev.includes('order') || prev.includes('search') || prev.includes('labels')
+                    ? `${prev}&limit=${limit}&offset=${page * limit}`
+                    : `${prev}?limit=${limit}&offset=${page * limit}`
+        }
+    }}
+    autoWidth={true}
+/>
 
 	<Modals>
 		<div slot="backdrop" class="backdrop" transition:fade on:click={closeModal} />

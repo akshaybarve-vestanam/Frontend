@@ -47,7 +47,7 @@
 			sort: false
 		},
 		{
-			name: 'Companies',
+			name: 'Company',
 			sort: false
 		},
 		{
@@ -83,7 +83,10 @@
 		});
 		if (response.ok) {
 			const data = await response.json();
-			users = data;
+			users = data.map(user => ({
+            ...user,
+            companies: user.company ? user.company.name : 'No Company' // Map the company name for display
+        }));
 			filteredUsers = data;
 		} else {
 			console.error('Failed to fetch users');
@@ -91,28 +94,28 @@
 	}
 
 	async function searchUsers() {
-		if (searchText) {
-			grid
-				.updateConfig({
-					server: {
-						url: $auth_base_url + `users?search=${searchText}`,
-						credentials: 'include',
-						then: (data) => {
-							return data.d.map((u, index) => [
-								index + 1,
-								u.userId,
-								u.fullName,
-								u.email,
-								u.mobileNumber,
-								u.companies.join(', ')
-							]);
-						},
-						total: (data) => data.count
-					}
-				})
-				.forceRender();
-		}
+	if (searchText) {
+		grid
+			.updateConfig({
+				server: {
+					url: $auth_base_url + `users?search=${searchText}`,
+					credentials: 'include',
+					then: (data) => {
+						return data.d.map((u, index) => [
+							index + 1,
+							u.userId,
+							u.fullName,
+							u.email,
+							u.mobileNumber,
+							u.companies
+						]);
+					},
+					total: (data) => data.count
+				}
+			})
+			.forceRender();
 	}
+}
 
 	function clearSearch() {
 		searchText = '';
@@ -129,7 +132,7 @@
 							u.fullName,
 							u.email,
 							u.mobileNumber,
-							u.companies.join(', ')
+							u.companies
 						]);
 					},
 					total: (data) => data.count
@@ -202,7 +205,7 @@
 			credentials: 'include',
 			then: (data) =>
 				data.d.map((u, index) => {
-					return [index + 1, u.userId, u.fullName, u.email, u.mobileNumber, u.companies.join(', ')];
+					return [index + 1, u.userId, u.fullName, u.email, u.mobileNumber, u.companies];
 				}),
 			total: (data) => data.count
 		}}

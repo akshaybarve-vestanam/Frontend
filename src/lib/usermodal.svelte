@@ -1,22 +1,65 @@
+
+
+
+
+
+
+
 <script>
 	// @ts-ignore
 	import { onMount } from 'svelte';
 	import { auth_base_url } from '../stores/constants';
 	import { closeModal } from 'svelte-modals';
-
+	import { debounce } from 'lodash-es';
 	export let title;
 	export let message;
 	export let data = {
 		fullName: '',
 		email: '',
 		mobileNumber: '',
-		companies: []
+		company: ''
 	};
+
+	let companies = [];
+	let filteredCompanies = [];
+
+	onMount(async () => {
+		await fetchCompanies();
+	});
+
+	async function fetchCompanies() {
+		const response = await fetch($auth_base_url + `companies`, {
+			method: 'GET',
+			credentials: 'include',
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+
+		if (response.ok) {
+			const result = await response.json();
+			companies = result.d;
+		} else {
+			console.error('Failed to fetch companies');
+		}
+	}
+
+	function filterCompanies(input) {
+		if (input.trim() === '') {
+			filteredCompanies = [];
+		} else {
+			filteredCompanies = companies.filter(company =>
+				company.name.toLowerCase().includes(input.toLowerCase())
+			);
+		}
+	}
+
+	const debouncedFilter = debounce(filterCompanies, 300);
 
 	async function handleSubmit(event) {
 		event.preventDefault();
-
-		if (data.fullName && data.email && data.mobileNumber) {
+		console.log('Submitting data: ', data);
+		if (data.fullName && data.email && data.mobileNumber && data.company) {
 			const res = await fetch($auth_base_url + `/users/register`, {
 				method: 'POST',
 				credentials: 'include',
@@ -61,8 +104,15 @@
 					<input type="text" id="mobileNumber" class="form-control" bind:value={data.mobileNumber} />
 				</div>
 				<div class="form-group">
-					<label for="companies">Companies</label>
-					<input type="text" id="companies" class="form-control" bind:value={data.companies} placeholder="Comma-separated list of companies" />
+					<label for="company">Company</label>
+					<input type="text" id="company" class="form-control" on:input={(e) => debouncedFilter(e.target.value)} bind:value={data.company} placeholder="Search your company" />
+					<ul class="suggestions">
+						{#if filteredCompanies.length > 0}
+							{#each filteredCompanies as company}
+								<li on:click={() => { data.company = company.name; filteredCompanies = []; }}>{company.name}</li>
+							{/each}
+						{/if}
+					</ul>
 				</div>
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</form>
@@ -118,6 +168,24 @@
 		width: 100%;
 		padding: 8px;
 		box-sizing: border-box;
+	}
+
+	.suggestions {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+		border: 1px solid #ccc;
+		max-height: 150px;
+		overflow-y: auto;
+	}
+
+	.suggestions li {
+		padding: 8px;
+		cursor: pointer;
+	}
+
+	.suggestions li:hover {
+		background-color: #f0f0f0;
 	}
 
 	.close-btn {
