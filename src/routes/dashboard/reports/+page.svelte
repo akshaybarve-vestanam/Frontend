@@ -10,6 +10,7 @@
 	import Grid from 'gridjs-svelte';
 	import { h, PluginPosition } from 'gridjs';
 	import { auth_base_url } from '../../../stores/constants';
+	
 
 	let candidates = [];
 	let filteredCandidates = [];
@@ -25,8 +26,13 @@
 	let grid;
 	let tags = [];
 	let tempSuggestions = [];
+	$: isSearchActive = startDate || endDate || tags.length > 0 || searchText;
 
 	const columns = [
+		{
+			name: 'No',
+			sort: false
+		},
 		{
 			name: 'Id',
 			sort: false
@@ -73,40 +79,42 @@
 		{
 			name: 'Action',
 			formatter: (cell, row) => {
-				return h('div', { className: 'button-container-grid ' }, [
+				const candidateId = row.cells[1].data;
+				return h('div', { className: 'button-container button-container-grid ' }, [
 					// Wrap buttons in a div
 					h(
 						'button',
 						{
-							className: 'edit-button',
+							className: 'btn btn-transparent btn-sm me-1',
 							onClick: () => {
 								// Handle edit action
-								console.log(`Editing row data:`, row.cells[0].data, row.cells[1].data);
+								console.log('Editing row data:', row.cells[0].data, row.cells[1].data);
 							}
 						},
-						'Edit'
+						h('i', { className: 'bi bi-pencil-square text-dark' }) // Bootstrap edit icon with black color
 					),
 					h(
 						'button',
 						{
-							className: 'delete-button',
-							onClick: () => {
-								// Handle delete action
-								console.log(`Deleting row data:`, row.cells[0].data, row.cells[1].data);
+							className: 'btn btn-transparent btn-sm me-1',
+							onClick: async () => {
+								// Handle download action
+								console.log('Downloading row data:', row.cells[0].data, candidateId);
+								await downloadCandidateData(candidateId);
 							}
 						},
-						'Download'
+						h('i', { className: 'bi bi-download text-dark' }) // Bootstrap download icon with black color
 					),
 					h(
 						'button',
 						{
-							className: 'delete-button',
+							className: 'btn btn-transparent btn-sm',
 							onClick: () => {
-								// Handle delete action
-								console.log(`Deleting row data:`, row.cells[0].data, row.cells[1].data);
+								// Handle email action
+								console.log('Emailing row data:', row.cells[0].data, row.cells[1].data);
 							}
 						},
-						'Email'
+						h('i', { className: 'bi bi-envelope text-dark' }) // Bootstrap email icon with black color
 					)
 				]);
 			}
@@ -151,6 +159,36 @@
 		}
 	};
 
+	async function downloadCandidateData(candidateId) {
+  try {
+    const response = await fetch($auth_base_url + `/download/${candidateId}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/zip',
+      },
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `${candidateId}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } else {
+      console.error('Failed to download candidate data');
+    }
+  } catch (error) {
+    console.error('Error downloading candidate data:', error);
+  }
+}
+
+
+
 	async function tagAdded(newTag) {
 		tempSuggestions = [];
 	}
@@ -175,8 +213,9 @@
 							`candidate?startDate=${startDate}&endDate=${endDate}&labels=${tags}&search=${searchText}`,
 						credentials: 'include',
 						then: (data) =>
-							data.d.map((c) => {
+							data.d.map((c,index) => {
 								return [
+									index+1,
 									c.candidateId,
 									c.fullName,
 									c.email,
@@ -260,6 +299,14 @@
 		}
 		closeModal(); // Close the modal after sending the email
 	}
+	function clearSearch() {
+		startDate = '';
+		endDate = '';
+		selectedLabels = [];
+		searchText = '';
+		tags = [];
+		searchCandidates();
+	}
 </script>
 
 <div class="container mt-4">
@@ -299,6 +346,11 @@
 		<div class="col">
 			<button class="btn btn-primary" on:click={searchCandidates}>Search</button>
 		</div>
+		<div class="col">
+			{#if isSearchActive}
+				<button class="btn btn-primary gogo" on:click={clearSearch}>Clear Search</button>
+			{/if}
+		</div>
 	</div>
 
 	<Grid
@@ -318,8 +370,9 @@
 			url: $auth_base_url + 'candidate',
 			credentials: 'include',
 			then: (data) =>
-				data.d.map((c) => {
+				data.d.map((c,index) => {
 					return [
+						index+1,
 						c.candidateId,
 						c.fullName,
 						c.email,
@@ -370,6 +423,7 @@
 		display: flex;
 	}
 
+
 	h2 {
 		font-family: 'Reddit Mono', monospace;
 		font-weight: 700;
@@ -383,4 +437,37 @@
 		left: 0;
 		background: rgba(7, 37, 236, 0.5);
 	}
+	.btn-transparent {
+		background-color: transparent;
+		border: none;
+		padding: 5px 10px;
+	}
+
+	.btn-transparent .bi {
+		font-size: 16px;
+	}
+
+	.button-container {
+		display: flex;
+		gap: 10px;
+	}
+
+	button {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		cursor: pointer;
+	}
+
+	button i {
+		font-size: 16px;
+	}
+	.btn-danger {
+		margin-left: 985px;
+		margin-top: -64px;
+	}
+	.gogo{
+		margin-left: -110px;
+	}
+
 </style>

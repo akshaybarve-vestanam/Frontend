@@ -102,6 +102,18 @@
                 </a>
             </li>
             <li>
+                <a href="/dashboard/user-management" class="nav-link link-dark">
+                    <i class="bi bi-graph-up"></i>
+                    User Management
+                </a>
+            </li>
+            <li>
+                <a href="/dashboard/company-management" class="nav-link link-dark">
+                    <i class="bi bi-graph-up"></i>
+                    Company Management
+                </a>
+            </li>
+            <li>
                 <a href="/dashboard/stats" class="nav-link link-dark">
                     <i class="bi bi-graph-up"></i>
                     Stats/Analytics
