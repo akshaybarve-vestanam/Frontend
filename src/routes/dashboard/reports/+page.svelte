@@ -10,6 +10,7 @@
 	import Grid from 'gridjs-svelte';
 	import { h, PluginPosition } from 'gridjs';
 	import { auth_base_url } from '../../../stores/constants';
+	
 
 	let candidates = [];
 	let filteredCandidates = [];
@@ -117,24 +118,46 @@
 			}
 		},
 		{
+<<<<<<< HEAD
 			name: 'Action',
 			formatter: (cell, row) => {
 				return h('div', { className: 'button-container' }, [
 					// Edit button
+=======
+<<<<<<< HEAD
+			name: 'Action',
+			formatter: (cell, row) => {
+				const candidateId = row.cells[1].data;
+				return h('div', { className: 'button-container button-container-grid ' }, [
+					// Wrap buttons in a div
+>>>>>>> d41d066149a282bdea45279fd5faee521735cf6d
 					h(
 						'button',
 						{
 							className: 'btn btn-transparent btn-sm me-1',
+<<<<<<< HEAD
 							onclick: () => toggleEditMode(row) // Ensure this calls toggleEditMode
 						},
 						h('i', { className: 'bi bi-pencil-square text-dark' })
+=======
+							onClick: () => {
+								// Handle edit action
+								console.log('Editing row data:', row.cells[0].data, row.cells[1].data);
+							}
+						},
+						h('i', { className: 'bi bi-pencil-square text-dark' }) // Bootstrap edit icon with black color
+>>>>>>> d41d066149a282bdea45279fd5faee521735cf6d
 					),
 					h(
 						'button',
 						{
 							className: 'btn btn-transparent btn-sm me-1',
 							onClick: async () => {
+<<<<<<< HEAD
 								const candidateId = row.cells[1].data; // Get candidateId from the row
+=======
+								// Handle download action
+>>>>>>> d41d066149a282bdea45279fd5faee521735cf6d
 								console.log('Downloading row data:', row.cells[0].data, candidateId);
 								await downloadCandidateData(candidateId);
 							}
@@ -146,7 +169,12 @@
 						{
 							className: 'btn btn-transparent btn-sm',
 							onClick: () => {
+<<<<<<< HEAD
 								openEmailModal({ email: row.cells[3].data });
+=======
+								// Handle email action
+								console.log('Emailing row data:', row.cells[0].data, row.cells[1].data);
+>>>>>>> d41d066149a282bdea45279fd5faee521735cf6d
 							}
 						},
 						h('i', { className: 'bi bi-envelope text-dark' }) // Bootstrap email icon with black color
@@ -155,6 +183,50 @@
 			}
 		}
 	];
+<<<<<<< HEAD
+=======
+=======
+        name: 'Action',
+        formatter: (cell, row) => {
+            return h('div', { className: 'button-container' }, [
+                // Edit button
+                h(
+                    'button',
+                    {
+                        className: 'btn btn-transparent btn-sm me-1',
+                        onclick: () => toggleEditMode(row) // Ensure this calls toggleEditMode
+                    },
+                    h('i', { className: 'bi bi-pencil-square text-dark' })
+                ),
+                h(
+                    'button',
+                    {
+                        className: 'btn btn-transparent btn-sm me-1',
+                        onClick: async () => {
+                            const candidateId = row.cells[1].data; // Get candidateId from the row
+                            console.log('Downloading row data:', row.cells[0].data, candidateId);
+                            await downloadCandidateData(candidateId);
+                        }
+                    },
+                    h('i', { className: 'bi bi-download text-dark' }) // Bootstrap download icon with black color
+                ),
+                h(
+                    'button',
+                    {
+                        className: 'btn btn-transparent btn-sm',
+                        onClick: () => {
+                            openEmailModal({ email: row.cells[3].data });
+                        }
+                    },
+                    h('i', { className: 'bi bi-envelope text-dark' }) // Bootstrap email icon with black color
+                )
+            ]);
+        }
+    }
+];
+		
+>>>>>>> d179c8e18ab2f1adeed5d4b81edd11fcfaef2b59
+>>>>>>> d41d066149a282bdea45279fd5faee521735cf6d
 
 	onMount(async () => {
 		// await fetchCandidates();
@@ -163,6 +235,12 @@
 
 	let input = '';
 	let suggestions = [];
+
+	function handleEdit(event, row, column) {
+		console.log('=============');
+		console.log(event, row, column);
+		console.log('=============');
+	}
 
 	const fetchSuggestions = async (query) => {
 		// Replace this with your actual API call
@@ -505,6 +583,11 @@
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Reddit+Mono:wght@200..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 	@import 'https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css';
+
+	:global(.button-container-grid) {
+		display: flex;
+	}
+
 
 	h2 {
 		font-family: 'Reddit Mono', monospace;
