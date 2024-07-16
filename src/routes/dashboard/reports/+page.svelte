@@ -37,7 +37,6 @@
 			sort: false
 		},
 		{
-			
 			name: 'Name',
 			sort: false,
 			formatter: (cell, row) => {
@@ -118,45 +117,44 @@
 			}
 		},
 		{
-        name: 'Action',
-        formatter: (cell, row) => {
-            return h('div', { className: 'button-container' }, [
-                // Edit button
-                h(
-                    'button',
-                    {
-                        className: 'btn btn-transparent btn-sm me-1',
-                        onclick: () => toggleEditMode(row) // Ensure this calls toggleEditMode
-                    },
-                    h('i', { className: 'bi bi-pencil-square text-dark' })
-                ),
-                h(
-                    'button',
-                    {
-                        className: 'btn btn-transparent btn-sm me-1',
-                        onClick: async () => {
-                            const candidateId = row.cells[1].data; // Get candidateId from the row
-                            console.log('Downloading row data:', row.cells[0].data, candidateId);
-                            await downloadCandidateData(candidateId);
-                        }
-                    },
-                    h('i', { className: 'bi bi-download text-dark' }) // Bootstrap download icon with black color
-                ),
-                h(
-                    'button',
-                    {
-                        className: 'btn btn-transparent btn-sm',
-                        onClick: () => {
-                            openEmailModal({ email: row.cells[3].data });
-                        }
-                    },
-                    h('i', { className: 'bi bi-envelope text-dark' }) // Bootstrap email icon with black color
-                )
-            ]);
-        }
-    }
-];
-		
+			name: 'Action',
+			formatter: (cell, row) => {
+				return h('div', { className: 'button-container' }, [
+					// Edit button
+					h(
+						'button',
+						{
+							className: 'btn btn-transparent btn-sm me-1',
+							onclick: () => toggleEditMode(row) // Ensure this calls toggleEditMode
+						},
+						h('i', { className: 'bi bi-pencil-square text-dark' })
+					),
+					h(
+						'button',
+						{
+							className: 'btn btn-transparent btn-sm me-1',
+							onClick: async () => {
+								const candidateId = row.cells[1].data; // Get candidateId from the row
+								console.log('Downloading row data:', row.cells[0].data, candidateId);
+								await downloadCandidateData(candidateId);
+							}
+						},
+						h('i', { className: 'bi bi-download text-dark' }) // Bootstrap download icon with black color
+					),
+					h(
+						'button',
+						{
+							className: 'btn btn-transparent btn-sm',
+							onClick: () => {
+								openEmailModal({ email: row.cells[3].data });
+							}
+						},
+						h('i', { className: 'bi bi-envelope text-dark' }) // Bootstrap email icon with black color
+					)
+				]);
+			}
+		}
+	];
 
 	onMount(async () => {
 		// await fetchCandidates();
@@ -264,12 +262,24 @@
 	}
 
 	function toggleEditMode(row) {
-    console.log('Index ID:', row.cells[0].data, 'Row ID:', row.cells[1].data); // Log the index ID and row ID to the console
-}
+		const candidateData = {
+			candidateId: row.cells[1].data,
+			fullName: row.cells[2].data,
+			email: row.cells[3].data,
+			phoneNumber: row.cells[6].data,
+			testTypes: row.cells[4].data,
+			labels: row.cells[8].data
+		};
 
+		openModal(Candidatemodal, {
+			title: 'Edit Candidate',
+			message: 'Update the candidate information',
+			data: candidateData
+		});
+	}
 
 	async function saveChanges(row) {
-		const candidateId = row.cells[1].data; 
+		const candidateId = row.cells[1].data;
 		const updatedData = {
 			fullName: row.cells[2].data,
 			email: row.cells[3].data,
@@ -278,7 +288,7 @@
 		};
 
 		try {
-			const response = await fetch($auth_base_url+'/update/${candidateId}', {
+			const response = await fetch($auth_base_url + '/update/${candidateId}', {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -288,14 +298,12 @@
 
 			if (response.ok) {
 				console.log('Candidate updated successfully');
-				toggleEditMode(row); 
+				toggleEditMode(row);
 			} else {
 				console.error('Failed to update candidate');
-			
 			}
 		} catch (error) {
 			console.error('Error updating candidate:', error);
-			
 		}
 	}
 
