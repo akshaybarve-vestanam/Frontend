@@ -529,7 +529,7 @@
 		font-size: 16px;
 	}
 
-	.button-container {
+	:global(.button-container){
 		display: flex;
 		gap: 10px;
 	}
