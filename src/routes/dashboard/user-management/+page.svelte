@@ -5,6 +5,7 @@
 	import { fade } from 'svelte/transition';
 	import Modal from '$lib/Modal.svelte';
 	import UserModal from '$lib/usermodal.svelte';
+	import UserEditModal from '$lib/userEditModal.svelte';
 	import Grid from 'gridjs-svelte';
 	import { h, PluginPosition } from 'gridjs';
 	import { auth_base_url } from '../../../stores/constants';
@@ -59,7 +60,7 @@
 						{
 							className: 'btn btn-transparent btn-sm me-1',
 							onClick: () => {
-								editUser(row.cells[1].data);
+								editUser(row);
 							}
 						},
 						h('i', { className: 'bi bi-pencil-square text-dark' })
@@ -147,29 +148,47 @@
 		);
 	}
 
-	function editUser(userId) {
-		const user = users.find((u) => u.id === userId);
-		openModal(UserModal, {
-			title: `Edit User`,
-			user: user,
-			onSave: async (updatedUser) => {
-				const response = await fetch(auth_base_url + `users/${userId}`, {
-					method: 'PUT',
-					credentials: 'include',
-					headers: {
-						'content-type': 'application/json'
-					},
-					body: JSON.stringify(updatedUser)
-				});
-				if (response.ok) {
-					await fetchUsers();
-					closeModal();
-				} else {
-					console.error('Failed to update user');
-				}
-			}
-		});
+	function editUser(row) {
+    // const userToEdit = users.find(user => user.userId === userId);
+	const userData = {
+			userId: row.cells[1].data,
+			fullName: row.cells[2].data,
+			email: row.cells[3].data,
+			mobileNumber: row.cells[4].data,
+			companies: row.cells[5].data
+		};
+    openModal(UserEditModal,{
+      title: 'Edit User',
+	  user :userData
+
+        })
 	}
+      
+  
+//   async function updateUser(updatedUser) {
+//     const response = await fetch(auth_base_url + `users/${updatedUser.userId}`, {
+//       method: 'PUT',
+//       credentials: 'include',
+//       headers: {
+//         'content-type': 'application/json'
+//       },
+//       body: JSON.stringify(updatedUser)
+//     });
+//     if (response.ok) {
+//       await fetchUsers();
+//     } else {
+//       console.error('Failed to update user');
+//     }
+//   }
+
+	
+// 	$: filteredUsers = users.filter(user =>
+//         Object.values(user).some(value =>
+//             value.toLowerCase().includes(searchText.toLowerCase())
+//         )
+//     );
+
+//     $: filteredUsers = filteredUsers.slice((currentPage - 1) * limit, currentPage * limit);
 </script>
 
 <div class="container mt-4">
@@ -274,3 +293,26 @@
 		margin-left: 15px;
 	}
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
