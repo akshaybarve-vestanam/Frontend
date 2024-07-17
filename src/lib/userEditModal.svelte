@@ -85,10 +85,6 @@
 		closeModal();
 	}
 
-	function cancel() {
-		dispatch('cancel');
-		closeModal();
-	}
 </script>
 
 <div class="card">
@@ -147,7 +143,7 @@
 				</div>
 			</div>
 			<button type="submit" class="btn btn-primary">Save</button>
-			<button type="button" class="btn btn-secondary" on:click={cancel}>Cancel</button>
+			
 		</form>
 	</div>
 </div>

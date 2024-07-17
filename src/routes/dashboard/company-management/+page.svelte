@@ -8,6 +8,8 @@
 	import Grid from 'gridjs-svelte';
 	import { h, PluginPosition } from 'gridjs';
 	import { auth_base_url } from '../../../stores/constants';
+	import EditCompanyModal from '$lib/EditCompanyModal.svelte';
+
 
 	let companies = [];
 	let filteredCompanies = [];
@@ -58,9 +60,8 @@
 						'button',
 						{
 							className: 'btn btn-transparent btn-sm me-1',
-							onClick: () => {
-								// editCompany(row.cells[1].data);
-							}
+							onclick: () => toggleEditMode(row)
+							
 						},
 						h('i', { className: 'bi bi-pencil-square text-dark' })
 					)
@@ -170,29 +171,19 @@
 		);
 	}
 
-	function editCompany(companyId) {
-		const company = companies.find((c) => c.id === companyId);
-		openModal(CompanyModal, {
-			title: `Edit Company`,
-			company: company,
-			onSave: async (updatedCompany) => {
-				const response = await fetch(auth_base_url + `companies/${companyId}`, {
-					method: 'PUT',
-					credentials: 'include',
-					headers: {
-						'content-type': 'application/json'
-					},
-					body: JSON.stringify(updatedCompany)
-				});
-				if (response.ok) {
-					await fetchCompanies();
-					closeModal();
-				} else {
-					console.error('Failed to update company');
-				}
-			}
-		});
-	}
+	function toggleEditMode(row) {
+        const companyData = {
+            companyId: row.cells[1].data,
+            name: row.cells[2].data,
+            city: row.cells[3].data,
+            country: row.cells[4].data,
+            division: row.cells[5].data
+        };
+
+        openModal(EditCompanyModal, { company: companyData });
+    }
+
+
 </script>
 
 <div class="container mt-4">
