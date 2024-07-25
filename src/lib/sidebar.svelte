@@ -168,6 +168,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
 <script>
 	import { onMount } from 'svelte';
 	import { auth_base_url } from '../stores/constants';
@@ -193,68 +202,72 @@
 	const toggleSidebar = () => {
 		showSidebar = !showSidebar;
 	};
+
+	const closeSidebar = () => {
+		showSidebar = false;
+	};
 </script>
 
 <div class="d-flex">
 	<!-- Toggle button for mobile devices -->
-	<button class="btn-toggle-sidebar" on:click={toggleSidebar}>
+	<button class="btn-toggle-sidebar" on:click={toggleSidebar} class:hide={showSidebar}>
 		<i class="bi bi-list"></i>
 	</button>
 
+	{#if showSidebar}
+		<!-- Overlay for clicking outside the sidebar to close it -->
+		<div class="overlay" on:click={closeSidebar}></div>
+	{/if}
+
 	<div class={`d-flex flex-column flex-shrink-0 p-3 bg-light sidebar ${showSidebar ? 'show' : ''}`}>
-		<a
-			href="/"
-			class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
-		>
+		<a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
 			<span class="fs-4">Dashboard</span>
 		</a>
 		<hr />
 		<ul class="nav nav-pills flex-column mb-auto">
 			<li class="nav-item">
-				<a
-					class="nav-link"
-					href="#"
-					aria-current="page"
-					on:click={() => (showRegistrationSubmenu = !showRegistrationSubmenu)}
-				>
+				<a class="nav-link" href="#" aria-current="page" on:click={() => { showRegistrationSubmenu = !showRegistrationSubmenu; closeSidebar(); }}>
 					<i class="bi bi-person-plus"></i>
 					Registration
 					<i class={`bi ${showRegistrationSubmenu ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
 				</a>
 				<ul class={`nav flex-column submenu collapse ${showRegistrationSubmenu ? 'show' : ''}`}>
 					<li class="nav-item">
-						<a href="/dashboard/registration/individual" class="nav-link">
+						<a href="/dashboard/registration/individual" class="nav-link" on:click={closeSidebar}>
 							<i class="bi bi-person"></i> Individual
 						</a>
 					</li>
 					<li class="nav-item">
-						<a href="/dashboard/registration/bulk" class="nav-link">
+						<a href="/dashboard/registration/bulk" class="nav-link" on:click={closeSidebar}>
 							<i class="bi bi-people"></i> Bulk
 						</a>
 					</li>
 				</ul>
 			</li>
 			<li>
-				<a href="/dashboard/reports" class="nav-link link-dark">
+				<a href="/dashboard/reports" class="nav-link link-dark" on:click={closeSidebar}>
 					<i class="bi bi-table"></i>
 					Candidates
 				</a>
 			</li>
 			<li>
-				<a href="/dashboard/user-management" class="nav-link link-dark">
+				<a href="/dashboard/user-management" class="nav-link link-dark" on:click={closeSidebar}>
 					<i class="bi bi-graph-up"></i>
 					User Management
 				</a>
 			</li>
 			<li>
-				<a href="/dashboard/company-management" class="nav-link link-dark">
+				<a href="/dashboard/company-management" class="nav-link link-dark" on:click={closeSidebar}>
 					<i class="bi bi-graph-up"></i>
 					Company Management
 				</a>
 			</li>
 		</ul>
 		<hr />
-		<button class="btn btn-logout" on:click={handleLogout}>Logout</button>
+		<a class="nav-link link-dark logout-link" on:click={handleLogout} style="cursor: pointer;">
+			<i class="bi bi-box-arrow-right"></i>
+			Logout
+		</a>
 	</div>
 	<div class="content">
 		<slot />
@@ -309,21 +322,13 @@
 		align-items: center;
 		font-family: 'Reddit Mono', monospace;
 	}
-	.btn-logout {
-		background: rgba(255, 255, 255, 0.5);
-		border: 1px solid white;
-		color: black;
-		width: 50%;
-		padding: 10px;
-		text-align: center;
-		cursor: pointer;
-		font-size: 16px;
-		border-radius: 5px;
-		transition: background 0.3s ease;
+	.logout-link {
+		background: transparent !important;
+		color: white !important;
+		font-family: 'Reddit Mono', monospace;
 	}
-
-	.btn-logout:hover {
-		background: rgba(255, 255, 255, 0.7);
+	.logout-link:hover {
+		background-color: black !important;
 	}
 	.content {
 		margin-left: 280px; /* Adjust based on sidebar width */
@@ -331,7 +336,7 @@
 	}
 	@media (max-width: 768px) {
 		.sidebar {
-			width: 100%;
+			width: 75%; /* 3/4th of the screen */
 			transform: translateX(-100%); /* Hide sidebar by default on mobile */
 		}
 		.sidebar.show {
@@ -352,6 +357,18 @@
 			font-size: 1.5rem;
 			cursor: pointer;
 		}
+		.btn-toggle-sidebar.hide {
+			display: none;
+		}
+		.overlay {
+			position: fixed;
+			top: 0;
+			left: 75%; /* This will cover the remaining 1/4th of the screen */
+			width: 25%; /* Remaining 1/4th of the screen */
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			z-index: 999;
+		}
 	}
 	@media (min-width: 769px) {
 		.sidebar {
@@ -360,5 +377,9 @@
 		.btn-toggle-sidebar {
 			display: none;
 		}
+		.overlay {
+			display: none; /* No overlay on larger screens */
+		}
 	}
 </style>
+
