@@ -203,16 +203,16 @@
 				on:input={searchUsers}
 			/>
 		</div>
-		<div class="col">
+		<!-- <div class="col">
 			<button class="btn btn-primary" on:click={searchUsers}>Search</button>
-		</div>
+		</div> -->
 		<div class="col">
 			{#if isSearchActive}
-				<button class="btn btn-primary" on:click={clearSearch}>Clear Search</button>
+				<button class="btn btn-primary gogo" on:click={clearSearch}>Clear Search</button>
 			{/if}
 		</div>
 		<div class="col">
-			<button class="btn btn-success" on:click={addUser}>Add User</button>
+			<button class="btn btn-success soso" on:click={addUser}>Add User</button>
 		</div>
 	</div>
 
@@ -291,6 +291,13 @@
 
 	.btn-success {
 		margin-left: 15px;
+	}
+
+	.soso{
+		margin-left: 270px;
+	}
+	.gogo{
+		margin-right: 250px;
 	}
 </style>
 

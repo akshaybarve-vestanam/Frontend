@@ -427,12 +427,13 @@
 				class="form-control"
 				placeholder="Search by Name or Email"
 				bind:value={searchText}
+				on:input={searchCandidates}
 			/>
 		</div>
 
-		<div class="col">
+		<!-- <div class="col">
 			<button class="btn btn-primary" on:click={searchCandidates}>Search</button>
-		</div>
+		</div> -->
 		<div class="col">
 			{#if isSearchActive}
 				<button class="btn btn-primary gogo" on:click={clearSearch}>Clear Search</button>
@@ -458,6 +459,7 @@
 			credentials: 'include',
 			then: (data) =>
 				data.d.map((c, index) => {
+					
 					return [
 						index + 1,
 						c.candidateId,
@@ -549,6 +551,6 @@
 		margin-top: -64px;
 	}
 	.gogo {
-		margin-left: -110px;
+		margin-left: 0px;
 	}
 </style>
