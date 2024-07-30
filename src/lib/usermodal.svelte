@@ -53,7 +53,7 @@
         event.preventDefault();
         console.log('Submitting data: ', user);
         if (user.fullName && user.email && user.mobileNumber && user.company) {
-            const res = await fetch($auth_base_url + `/users/register`, {
+            const res = await fetch($auth_base_url + `users/register`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -98,7 +98,7 @@
                 </div>
                 <div class="form-group">
                     <label for="company">Company</label>
-                    <input type="text" id="company" class="form-control" on:input={(e) => debouncedFilter(e.target.value)} bind:value={user.company} placeholder="Search your company" />
+                    <input type="text" id="company" class="form-control" on:input={(e) => debouncedFilter(e.target.value)} bind:value={user.companies} placeholder="Search your company" />
                     <ul class="suggestions">
                         {#if filteredCompanies.length > 0}
                             {#each filteredCompanies as company}

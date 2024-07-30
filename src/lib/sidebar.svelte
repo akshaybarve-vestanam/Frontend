@@ -226,7 +226,7 @@
 		<hr />
 		<ul class="nav nav-pills flex-column mb-auto">
 			<li class="nav-item">
-				<a class="nav-link" href="#" aria-current="page" on:click={() => { showRegistrationSubmenu = !showRegistrationSubmenu; closeSidebar(); }}>
+				<a class="nav-link" href="#" aria-current="page" on:click={() => { showRegistrationSubmenu = !showRegistrationSubmenu; }}>
 					<i class="bi bi-person-plus"></i>
 					Registration
 					<i class={`bi ${showRegistrationSubmenu ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
